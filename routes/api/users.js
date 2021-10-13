@@ -76,39 +76,148 @@ router.get('/:id', (req, res) => {
 router.post('/', async (req, res) => {
     // Hashing the passwords
     
-    const {username, password: plainTxtPassword, role} = req.body
+    const {username, password: plainTxtPassword, role, nombre, apPaterno, apMaterno, ci, cargo, email, celular, estado, oficinaId} = req.body
 
     // Conditions
     if(!username || typeof username !== 'string'){
-        return res.json({status: 'error', error: 'Invalid username'})
+        return res.json({status: 'error', error: 'Nombre de Usuario No Valido o Nulo'})
     }
     if(!plainTxtPassword || typeof plainTxtPassword !== 'string'){
-        return res.json({status: 'error', error: 'Invalid password'})
+        return res.json({status: 'error', error: `Contraseña Invalida, Debe tener al menos 5 caracteres, al menos una letra minuscula y al menos un numero ${plainTxtPassword}`})
     }
     if(!role || typeof role !== 'string'){
-        return res.json({status: 'error', error: 'Invalid role'})
+        return res.json({status: 'error', error: 'Escoja un rol por favor'})
     }
+
+    if(!oficinaId || typeof oficinaId !== 'string'){
+        return res.json({status: 'error', error: 'Escoga una oficina por favor'})
+    }
+
+    if(!estado || typeof estado !== 'string'){
+        return res.json({status: 'error', error: 'Estado Invalido o Nulo'})
+    }
+
+    if(!celular || typeof celular !== 'string'){
+        return res.json({status: 'error', error: 'Celular Invalido o Nulo'})
+    }
+
+    if(!email || typeof email !== 'string'){
+        return res.json({status: 'error', error: 'Email Invalido o Nulo'})
+    }
+
+    if(!cargo || typeof cargo !== 'string'){
+        return res.json({status: 'error', error: 'cargo invalido o nulo'})
+    }
+
+    if(!ci || typeof ci !== 'string'){
+        return res.json({status: 'error', error: 'Ci invalido o nulo'})
+    }
+
+    if(!apMaterno || typeof apMaterno !== 'string'){
+        return res.json({status: 'error', error: 'Apellido Materno invalido o nulo'})
+    }
+
+    if(!apPaterno || typeof apPaterno !== 'string'){
+        return res.json({status: 'error', error: 'Apellido Paterno invalido o nulo'})
+    }
+
+    if(!nombre || typeof nombre !== 'string'){
+        return res.json({status: 'error', error: 'Nombre Invalido o Nulo'})
+    }
+
     if(!username.match(/^[a-z][^\W_]{3,14}$/i)){
         return res.json({status: 'error', error: 'Nombre de Usuario no Valido'})
     }
     if(!plainTxtPassword.match(/^(?=[^a-z]*[a-z])(?=\D*\d)[^:&.~\s]{3,20}$/)){
-        return res.json({status: 'error', error: 'Contrasenia Invalida, Debe tener al menos 5 caracteres, al menos una letra minuscula y al menos un numero'})
+        return res.json({status: 'error', error: 'Contraseña Invalida, Debe tener al menos 5 caracteres, al menos una letra minuscula y al menos un numero'})
     }
 
     const password = await bcrypt.hash(plainTxtPassword, 10)
 
-    User.create({username, password, role})
+    User.create({username, password, role, nombre, apPaterno, apMaterno, ci, cargo, email, celular, estado, oficinaId})
         .then(user => res.json({msg: 'User added Successfully'}))
-        .catch(err => res.status(404).json({ error: err.code === 11000 ? 'Nombre de Usuario ya esta en uso' : 'No se pudo crear el usuario error desconocido'}))    
+        .catch(err => res.json({error: err.code, errmsg: err.message}))
+        // .catch(err => res.status(404).json({ error: err.code === 11000 ? 'Nombre de Usuario ya esta en uso' : 'No se pudo crear el usuario error desconocido'}))    
 })
 
 // @route PUT api/users/:id
 // @description update a book by id
-router.put('/:id', (req, res) => {
-    User.findByIdAndUpdate(req.params.id, req.body)
+router.put('/:id', async(req, res) => {
+    // Hashing the passwords
+    
+    const {username, password: plainTxtPassword, role, nombre, apPaterno, apMaterno, ci, cargo, email, celular, estado, oficinaId} = req.body
+
+    // Conditions
+    // if(!username || typeof username !== 'string'){
+    //     return res.json({status: 'error', error: 'Nombre de Usuario No Valido o Nulo'})
+    // }
+    if(!plainTxtPassword || typeof plainTxtPassword !== 'string'){
+        return res.json({status: 'error', error: `Contraseña Invalida, Debe tener al menos 5 caracteres, al menos una letra minuscula y al menos un numero ${plainTxtPassword}`})
+    }
+    if(!role || typeof role !== 'string'){
+        return res.json({status: 'error', error: 'Escoja un rol por favor'})
+    }
+
+    if(!oficinaId || typeof oficinaId !== 'string'){
+        return res.json({status: 'error', error: 'Escoga una oficina por favor'})
+    }
+
+    if(!estado || typeof estado !== 'string'){
+        return res.json({status: 'error', error: 'Estado Invalido o Nulo'})
+    }
+
+    if(!celular || typeof celular !== 'string'){
+        return res.json({status: 'error', error: 'Celular Invalido o Nulo'})
+    }
+
+    if(!email || typeof email !== 'string'){
+        return res.json({status: 'error', error: 'Email Invalido o Nulo'})
+    }
+
+    if(!cargo || typeof cargo !== 'string'){
+        return res.json({status: 'error', error: 'cargo invalido o nulo'})
+    }
+
+    if(!ci || typeof ci !== 'string'){
+        return res.json({status: 'error', error: 'Ci invalido o nulo'})
+    }
+
+    if(!apMaterno || typeof apMaterno !== 'string'){
+        return res.json({status: 'error', error: 'Apellido Materno invalido o nulo'})
+    }
+
+    if(!apPaterno || typeof apPaterno !== 'string'){
+        return res.json({status: 'error', error: 'Apellido Paterno invalido o nulo'})
+    }
+
+    if(!nombre || typeof nombre !== 'string'){
+        return res.json({status: 'error', error: 'Nombre Invalido o Nulo'})
+    }
+
+    // if(!username.match(/^[a-z][^\W_]{3,14}$/i)){
+    //     return res.json({status: 'error', error: 'Nombre de Usuario no Valido'})
+    // }
+    if(!plainTxtPassword.match(/^(?=[^a-z]*[a-z])(?=\D*\d)[^:&.~\s]{3,20}$/)){
+        return res.json({status: 'error', error: 'Contraseña Invalida, Debe tener al menos 5 caracteres, al menos una letra minuscula y al menos un numero'})
+    }
+
+    const password = await bcrypt.hash(plainTxtPassword, 10)
+
+    User.findByIdAndUpdate(req.params.id, {username, password, role, nombre, apPaterno, apMaterno, ci, cargo, email, celular, estado, oficinaId})
         .then(user => res.json({msg: 'Updated Succesfully'}))
         .catch(err => res.status(404).json({ error: 'No se pudo actualizar la base de datos'}))    
 })
+
+// @route PUT api/users/:id
+// @description update a book by id
+router.put('/:id/estado', async(req, res) => {
+    // Hashing the passwords
+    User.findByIdAndUpdate(req.params.id, req.body)
+        .then(user => res.json({msg: 'Updated Succesfully'}))
+        .catch(err => res.status(404).json({ error: err.message}))    
+})
+
+
 
 // @route DELETE api/users/:id
 // @description delete a book by id

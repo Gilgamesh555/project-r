@@ -31,25 +31,25 @@ router.get('/:id', (req, res) => {
 router.post('/', async (req, res) => {
     // Hashing the passwords
     
-    const {nombre, codigo} = req.body
+    const {nombre, codigo, estado} = req.body
 
-    User.create({nombre, codigo})
+    Oficina.create({nombre, codigo, estado})
         .then(oficina => res.json({msg: 'Oficina added Successfully'}))
-        .catch(err => res.status(404).json({ error: err.code === 11000 ? 'Nombre de Usuario ya esta en uso' : 'No se pudo crear el usuario error desconocido'}))    
+        .catch(err => res.json({ error: err.code === 11000 ? 'Nombre de Usuario ya esta en uso' : 'No se pudo crear el usuario error desconocido'}))    
 })
 
 // @route PUT api/oficinas/:id
 // @description update a oficina by id
 router.put('/:id', (req, res) => {
-    User.findByIdAndUpdate(req.params.id, req.body)
+    Oficina.findByIdAndUpdate(req.params.id, req.body)
         .then(oficina => res.json({msg: 'Updated Succesfully'}))
-        .catch(err => res.status(404).json({ error: 'No se pudo actualizar la base de datos'}))    
+        .catch(err => res.json({ error: 'No se pudo actualizar la base de datos'}))    
 })
 
 // @route DELETE api/oficinas/:id
 // @description delete a oficina by id
 router.delete('/:id', (req, res) => {
-    User.findByIdAndRemove(req.params.id, req.body)
+    Oficina.findByIdAndRemove(req.params.id, req.body)
     .then(oficina => res.json({msg: 'oficina entry deleted successfully'}))
     .catch(err => res.status(404).json({ error: 'El Usuario no Existe'}))    
 })

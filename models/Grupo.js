@@ -1,6 +1,6 @@
 const mongoose = require('mongoose')
 
-const OficinaSchema = new mongoose.Schema({
+const GrupoSchema = new mongoose.Schema({
     nombre: {
         type: String,
         required: true,
@@ -16,4 +16,4 @@ const OficinaSchema = new mongoose.Schema({
     }
 })
 
-module.exports = Oficina = mongoose.model('oficina', OficinaSchema)
+module.exports = Grupo = mongoose.model('grupo', GrupoSchema)
