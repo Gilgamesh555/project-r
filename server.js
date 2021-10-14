@@ -11,6 +11,9 @@ const bodyParser = require('body-parser')
 const users =  require('./routes/api/users')
 const oficinas = require('./routes/api/oficinas')
 const grupos = require('./routes/api/grupos')
+const auxiliares = require('./routes/api/auxiliares')
+const activos = require('./routes/api/activos')
+const ufv = require('./routes/api/ufv')
 
 const app = express()
 
@@ -33,6 +36,9 @@ app.get('/', (req, res) => res.send('Hello World!'))
 app.use('/api/users', users)
 app.use('/api/oficinas', oficinas)
 app.use('/api/grupos', grupos)
+app.use('/api/auxiliares', auxiliares)
+app.use('/api/activos', activos)
+app.use('/api/ufv', ufv)
 
 const port = process.env.PORT || 8002
 
