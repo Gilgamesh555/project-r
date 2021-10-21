@@ -6,11 +6,20 @@ const jwt = require('jsonwebtoken')
 
 // Load Auxiliar Model
 const Auxiliar = require('../../models/Auxiliar')
+const Grupo = require('../../models/Grupo')
 const { json } = require('body-parser')
 
 // JWTSECRET
 const JWTSECRET = 'vjkb@!#!#!$%%^fdjbiweqwe1235@bbiwebdfgfgdfbdfbnttnt'
 
+
+// // @route GET api/auxiliares/
+// // @description get all auxiliares
+// router.get('/getGrupos', (req, res) => {
+//     Auxiliar.countDocuments({grupoId: ['61673109ca29bcda2247', '61673109ca29bcda2247']})
+//         .then(users => res.json(users))
+//         .catch(err => res.status(404).json({ nousersfound: 'Auxiliares no encontrados'}))    
+// })
 
 // @route GET api/auxiliares/
 // @description get all auxiliares
@@ -33,26 +42,36 @@ router.get('/:id', (req, res) => {
 router.post('/', async (req, res) => {
     // Hashing the passwords
     
-    const {nombre, codigo, estado, descripcion, grupoId} = req.body
+    const {nombre, estado, grupoId} = req.body
+
+    var codigo = await Auxiliar.findOne({grupoId: grupoId}, {}, { sort: { 'codigo': -1}})
+    .then(auxiliar => {
+        if(auxiliar === null){
+            return 100
+        }else{
+            return parseInt(auxiliar.codigo) + 1
+        }
+    })
+
+    if(codigo === 100) {
+        codigo = await Grupo.findById(grupoId)
+        .then(grupo => {
+            return parseInt(grupo.codigo) + 1
+        })
+    }
 
     // Conditions
     if(!nombre || typeof nombre !== 'string'){
         return res.json({status: 'error', error: 'Nombre No Valido o Nulo'})
     }
-    if(!codigo || typeof codigo !== 'string'){
-        return res.json({status: 'error', error: 'Codigo No Valido o Nulo'})
-    }
     if(!estado || typeof estado !== 'string'){
         return res.json({status: 'error', error: 'Estado Nulo'})
-    }
-    if(!descripcion || typeof descripcion !== 'string'){
-        return res.json({status: 'error', error: 'Descripcion No Valida o Nula'})
     }
     if(!grupoId || typeof grupoId !== 'string'){
         return res.json({status: 'error', error: 'Grupo Escogido No Valido o Nula'})
     }
 
-    Auxiliar.create({nombre, codigo, estado, descripcion, grupoId})
+    Auxiliar.create({nombre, codigo, estado, grupoId})
     .then(user => res.json({msg: 'User added Successfully'}))
     .catch(err => res.json({error: err.code, errmsg: err.message}))
         // .catch(err => res.status(404).json({ error: err.code === 11000 ? 'Nombre de Usuario ya esta en uso' : 'No se pudo crear el usuario error desconocido'}))    
@@ -63,20 +82,50 @@ router.post('/', async (req, res) => {
 router.put('/:id', async(req, res) => {
     // Hashing the passwords
     
-    const {nombre, codigo, estado} = req.body
+    const {nombre, estado, grupoId, _id} = req.body
+
+    var codigo = await Auxiliar.findOne({grupoId: grupoId, _id: _id}, {})
+    .then(auxiliar => {
+        if(auxiliar === null){
+            return -1
+        }else{
+            return req.body.codigo
+        }
+    })
+
+    if(codigo === -1) {
+        codigo = await Auxiliar.findOne({grupoId: grupoId}, {}, { sort: { 'codigo': -1}})
+        .then(auxiliar => {
+            if(auxiliar === null){
+                return 100
+            }else{
+                return parseInt(auxiliar.codigo) + 1
+            }
+        })
+
+        if(codigo === 100) {
+            codigo = await Grupo.findById(grupoId)
+            .then(grupo => {
+                return parseInt(grupo.codigo) + 1
+            })
+        }
+    }
 
     // Conditions
     if(!nombre || typeof nombre !== 'string'){
         return res.json({status: 'error', error: 'Nombre No Valido o Nulo'})
     }
-    if(!codigo || typeof codigo !== 'string'){
-        return res.json({status: 'error', error: 'Codigo No Valido o Nulo'})
+    // if(!codigo || typeof codigo !== 'string'){
+    //     return res.json({status: 'error', error: 'Codigo No Valido o Nulo'})
+    // }
+    if(!grupoId || typeof grupoId !== 'string'){
+        return res.json({status: 'error', error: 'Grupo No Valido o Nulo'})
     }
     if(!estado || typeof estado !== 'string'){
         return res.json({status: 'error', error: 'Estado Nulo'})
     }
 
-    Auxiliar.findByIdAndUpdate(req.params.id, {nombre, codigo, estado})
+    Auxiliar.findByIdAndUpdate(req.params.id, {nombre, codigo, estado, grupoId})
         .then(user => res.json({msg: 'Updated Succesfully'}))
         .catch(err => res.status(404).json({ error: 'No se pudo actualizar la base de datos'}))    
 })

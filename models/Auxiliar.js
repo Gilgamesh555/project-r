@@ -14,10 +14,10 @@ const AuxiliarSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
-    descripcion: {
-        type: String,
-        required: true,
-    },
+    // descripcion: {
+    //     type: String,
+    //     required: true,
+    // },
     grupoId: {
         type: String,
         required: true,

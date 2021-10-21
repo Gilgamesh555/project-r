@@ -54,14 +54,14 @@ const ActivoSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
-    vida: {
-        type: String,
-        required: true,
-    },
-    coe: {
-        type: String,
-        required: true,
-    }
+    // vida: {
+    //     type: String,
+    //     required: true,
+    // },
+    // coe: {
+    //     type: String,
+    //     required: true,
+    // }
 })
 
 module.exports = Activo = mongoose.model('activo', ActivoSchema)

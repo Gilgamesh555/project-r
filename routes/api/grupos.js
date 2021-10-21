@@ -6,11 +6,30 @@ const jwt = require('jsonwebtoken')
 
 // Load User Model
 const Grupo = require('../../models/Grupo')
+const Auxiliar = require('../../models/Auxiliar')
 const { json } = require('body-parser')
 
 // JWTSECRET
 const JWTSECRET = 'vjkb@!#!#!$%%^fdjbiweqwe1235@bbiwebdfgfgdfbdfbnttnt'
 
+// // @route GET api/grupos/
+// // @description get all grupos
+// router.get('/', (req, res) => {
+//     Grupo.find()
+//         .then(users => {
+//             const ids = users.map((index) => (
+//                 Auxiliar.countDocuments({'grupoId': { '$in': index._id }})
+//                 .then(auxiliares => {
+//                     var aux = {
+//                         id: 1,
+//                     }
+//                     index['count'] = auxiliares
+//                     console.log(indezx)
+//                 })
+//             ))
+//         })
+//         .catch(err => res.status(404).json({ nousersfound: 'Grupos no encontrados'}))    
+// })
 
 // @route GET api/grupos/
 // @description get all grupos
@@ -33,20 +52,32 @@ router.get('/:id', (req, res) => {
 router.post('/', async (req, res) => {
     // Hashing the passwords
     
-    const {nombre, codigo, estado} = req.body
+    const {nombre, estado, vida, coe} = req.body
+
+    var codigo = await Grupo.findOne({}, {}, { sort: { 'codigo': -1}})
+    .then(grupo => {
+        if(grupo  === null){
+            return 1000
+        }else{
+            return parseInt(grupo.codigo) + 1000
+        }
+    })
 
     // Conditions
     if(!nombre || typeof nombre !== 'string'){
         return res.json({status: 'error', error: 'Nombre No Valido o Nulo'})
     }
-    if(!codigo || typeof codigo !== 'string'){
-        return res.json({status: 'error', error: 'Codigo No Valido o Nulo'})
-    }
     if(!estado || typeof estado !== 'string'){
         return res.json({status: 'error', error: 'Estado Nulo'})
     }
+    if(!vida || typeof vida !== 'string'){
+        return res.json({status: 'error', error: 'Valor de vida Nulo'})
+    }
+    if(!coe || typeof coe !== 'string'){
+        return res.json({status: 'error', error: 'Valor de Coe Nulo'})
+    }
 
-    Grupo.create({nombre, codigo, estado})
+    Grupo.create({nombre, codigo, estado, vida, coe})
     .then(user => res.json({msg: 'User added Successfully'}))
     .catch(err => res.json({error: err.code, errmsg: err.message}))
         // .catch(err => res.status(404).json({ error: err.code === 11000 ? 'Nombre de Usuario ya esta en uso' : 'No se pudo crear el usuario error desconocido'}))    
@@ -57,7 +88,7 @@ router.post('/', async (req, res) => {
 router.put('/:id', async(req, res) => {
     // Hashing the passwords
     
-    const {nombre, codigo, estado} = req.body
+    const {nombre, estado, codigo, vida, coe} = req.body
 
     // Conditions
     if(!nombre || typeof nombre !== 'string'){
@@ -69,8 +100,14 @@ router.put('/:id', async(req, res) => {
     if(!estado || typeof estado !== 'string'){
         return res.json({status: 'error', error: 'Estado Nulo'})
     }
+    if(!vida || typeof vida !== 'string'){
+        return res.json({status: 'error', error: 'Valor de vida Nulo'})
+    }
+    if(!coe || typeof coe !== 'string'){
+        return res.json({status: 'error', error: 'Valor de Coe Nulo'})
+    }
 
-    Grupo.findByIdAndUpdate(req.params.id, {nombre, codigo, estado})
+    Grupo.findByIdAndUpdate(req.params.id, {nombre, codigo, estado, vida, coe})
         .then(user => res.json({msg: 'Updated Succesfully'}))
         .catch(err => res.status(404).json({ error: 'No se pudo actualizar la base de datos'}))    
 })

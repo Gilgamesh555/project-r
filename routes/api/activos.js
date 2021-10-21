@@ -7,6 +7,8 @@ const jwt = require('jsonwebtoken')
 // Load Activo Model
 const Activo = require('../../models/Activo')
 const { json } = require('body-parser')
+const Grupo = require('../../models/Grupo')
+const Auxiliar = require('../../models/Auxiliar')
 
 // JWTSECRET
 const JWTSECRET = 'vjkb@!#!#!$%%^fdjbiweqwe1235@bbiwebdfgfgdfbdfbnttnt'
@@ -32,16 +34,37 @@ router.get('/:id', (req, res) => {
 router.post('/', async (req, res) => {
     // Hashing the passwords
 
-    const {codigo, fechaIncorporacion, fechaRegistro, ufvId, grupoId, auxiliarId, oficinaId, usuarioId, estadoActivo, costoInicial, observaciones, estado, descripcion, vida, coe} = req.body
+    const {fechaIncorporacion, fechaRegistro, ufvId, grupoId, auxiliarId, oficinaId, usuarioId, estadoActivo, costoInicial, observaciones, estado, descripcion} = req.body
+
+    var codigoL = await Grupo.findOne({_id: grupoId})
+    .then(grupo => {
+        return grupo.nombre.toLowerCase().substr(0,2)
+    })
+
+    var codigoN = await Auxiliar.findOne({_id: auxiliarId})
+    .then(auxiliar => {
+        return auxiliar.codigo
+    })
+    
+    var codigo = await Activo.findOne({grupoId: grupoId, auxiliarId: auxiliarId})
+        .then(activo => {
+            if(activo === null) {
+                return 1001
+            }else{
+                return parseInt(activo.codigo.split('-')[1])+1
+            }
+        })
+    
+    codigo = codigoL+codigoN+'-'+codigo
 
     // Conditions
-    if(!vida || typeof vida !== 'string'){
-        return res.json({status: 'error', error: 'Valor de Vida No Valido o Nulo'})
-    }
+    // if(!vida || typeof vida !== 'string'){
+    //     return res.json({status: 'error', error: 'Valor de Vida No Valido o Nulo'})
+    // }
 
-    if(!coe || typeof coe !== 'string'){
-        return res.json({status: 'error', error: 'Valor de coe No Valido o Nulo'})
-    }
+    // if(!coe || typeof coe !== 'string'){
+    //     return res.json({status: 'error', error: 'Valor de coe No Valido o Nulo'})
+    // }
 
     if(!descripcion || typeof descripcion !== 'string'){
         return res.json({status: 'error', error: 'Descripcion No Valido o Nulo'})
@@ -87,12 +110,12 @@ router.post('/', async (req, res) => {
         return res.json({status: 'error', error: 'Fecha de Incorporacion No Valida o Nula'})
     }
 
-    if(!codigo || typeof codigo !== 'string'){
-        return res.json({status: 'error', error: 'Codigo No Valido o Nulo'})
-    }
+    // if(!codigo || typeof codigo !== 'string'){
+    //     return res.json({status: 'error', error: 'Codigo No Valido o Nulo'})
+    // }
     
 
-    Activo.create({codigo, fechaIncorporacion, fechaRegistro, ufvId, grupoId, auxiliarId, oficinaId, usuarioId, estadoActivo, costoInicial, observaciones, estado, descripcion, vida, coe})
+    Activo.create({codigo, fechaIncorporacion, fechaRegistro, ufvId, grupoId, auxiliarId, oficinaId, usuarioId, estadoActivo, costoInicial, observaciones, estado, descripcion})
         .then(user => res.json({msg: 'User added Successfully'}))
         .catch(err => res.json({error: err.code, errmsg: err.message}))
         // .catch(err => res.status(404).json({ error: err.code === 11000 ? 'Nombre de Usuario ya esta en uso' : 'No se pudo crear el usuario error desconocido'}))    
@@ -103,7 +126,39 @@ router.post('/', async (req, res) => {
 router.put('/:id', async(req, res) => {
     // Hashing the passwords
     
-    const {codigo, fechaIncorporacion, fechaRegistro, ufvId, grupoId, auxiliarId, oficinaId, usuarioId, estadoActivo, costoInicial, observaciones, estado, descripcion, vida, coe} = req.body
+    const {fechaIncorporacion, fechaRegistro, ufvId, grupoId, auxiliarId, oficinaId, usuarioId, estadoActivo, costoInicial, observaciones, estado, descripcion, _id} = req.body
+
+    var codigoL = await Grupo.findOne({_id: grupoId})
+    .then(grupo => {
+        return grupo.nombre.toLowerCase().substr(0,2)
+    })
+
+    var codigoN = await Auxiliar.findOne({_id: auxiliarId})
+    .then(auxiliar => {
+        return auxiliar.codigo
+    })
+    
+    var codigo = await Activo.findOne({_id: _id, grupoId: grupoId, auxiliarId: auxiliarId})
+    .then(activo => {
+        if(activo === null) {
+            return -1
+        }else{
+            return activo.codigo.split('-')[1]
+        }
+    })
+
+    if(codigo === -1) {
+        codigo = await Activo.findOne({grupoId: grupoId, auxiliarId: auxiliarId})
+        .then(activo => {
+            if(activo === null) {
+                return 1001
+            }else{
+                return parseInt(activo.codigo.split('-')[1])+1
+            }
+        })
+    }
+    
+    codigo = codigoL+codigoN+'-'+codigo
 
     // Conditions
     if(!descripcion || typeof descripcion !== 'string'){
@@ -154,7 +209,7 @@ router.put('/:id', async(req, res) => {
         return res.json({status: 'error', error: 'Codigo No Valido o Nulo'})
     }
 
-    Activo.findByIdAndUpdate(req.params.id, {codigo, fechaIncorporacion, fechaRegistro, ufvId, grupoId, auxiliarId, oficinaId, usuarioId, estadoActivo, costoInicial, observaciones, estado, descripcion, vida, coe})
+    Activo.findByIdAndUpdate(req.params.id, {codigo, fechaIncorporacion, fechaRegistro, ufvId, grupoId, auxiliarId, oficinaId, usuarioId, estadoActivo, costoInicial, observaciones, estado, descripcion})
         .then(user => res.json({msg: 'Updated Succesfully'}))
         .catch(err => res.status(404).json({ error: 'No se pudo actualizar la base de datos'}))    
 })

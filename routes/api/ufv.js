@@ -11,6 +11,13 @@ const { json } = require('body-parser')
 // JWTSECRET
 const JWTSECRET = 'vjkb@!#!#!$%%^fdjbiweqwe1235@bbiwebdfgfgdfbdfbnttnt'
 
+// @route GET api/ufvs/
+// @description get all ufvs
+router.post('/date', (req, res) => {
+    Ufv.findOne({fecha: req.body.fecha})
+        .then(users => res.json(users))
+        .catch(err => res.json({ noUfvFound: 'Ufvs no encontrados'}))    
+})
 
 // @route GET api/ufvs/
 // @description get all ufvs

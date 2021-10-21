@@ -13,6 +13,14 @@ const GrupoSchema = new mongoose.Schema({
     estado: {
         type: String,
         required: true,
+    },
+    vida: {
+        type: String,
+        required: true,
+    },
+    coe: {
+        type: String,
+        required: true,
     }
 })
 
