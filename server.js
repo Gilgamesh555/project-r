@@ -39,6 +39,7 @@ app.use('/api/grupos', grupos)
 app.use('/api/auxiliares', auxiliares)
 app.use('/api/activos', activos)
 app.use('/api/ufv', ufv)
+app.use('/uploadActivos', express.static('uploadActivos'))
 
 const port = process.env.PORT || 8002
 

@@ -54,6 +54,10 @@ const ActivoSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
+    imagePath: {
+        type: String,
+        required: true,
+    }
     // vida: {
     //     type: String,
     //     required: true,

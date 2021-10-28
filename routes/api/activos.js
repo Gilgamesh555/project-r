@@ -10,6 +10,30 @@ const { json } = require('body-parser')
 const Grupo = require('../../models/Grupo')
 const Auxiliar = require('../../models/Auxiliar')
 
+
+const multer  = require('multer')
+const path = require('path')
+
+//storage
+var storage = multer.diskStorage({
+    destination: function(req, file, cb){
+        cb(null, './uploadActivos')
+    },
+    filename: function(req, file, cb){
+        cb(null, file.fieldname+'_'+Date.now()+path.extname(file.originalname))
+    }
+})
+
+var upload = multer({
+    storage: storage,
+    fileFilter(req, file, cb){
+        if(!file.originalname.match(/\.(png|jpg)$/)){
+            return cb(new Error('Please upload a image'))
+        }
+        cb(undefined, true)
+    }
+})
+
 // JWTSECRET
 const JWTSECRET = 'vjkb@!#!#!$%%^fdjbiweqwe1235@bbiwebdfgfgdfbdfbnttnt'
 
@@ -31,10 +55,12 @@ router.get('/:id', (req, res) => {
 
 // @route POST api/activos
 // @description add/save a activo
-router.post('/', async (req, res) => {
+router.post('/', upload.single('imagePath'), async (req, res) => {
     // Hashing the passwords
 
     const {fechaIncorporacion, fechaRegistro, ufvId, grupoId, auxiliarId, oficinaId, usuarioId, estadoActivo, costoInicial, observaciones, estado, descripcion} = req.body
+
+    const imagePath = req.file.path
 
     var codigoL = await Grupo.findOne({_id: grupoId})
     .then(grupo => {
@@ -65,6 +91,10 @@ router.post('/', async (req, res) => {
     // if(!coe || typeof coe !== 'string'){
     //     return res.json({status: 'error', error: 'Valor de coe No Valido o Nulo'})
     // }
+
+    if(!imagePath) {
+        return res.json({status: 'error', error: 'Imagen no Valida o Nula'})
+    }
 
     if(!descripcion || typeof descripcion !== 'string'){
         return res.json({status: 'error', error: 'Descripcion No Valido o Nulo'})
@@ -115,7 +145,7 @@ router.post('/', async (req, res) => {
     // }
     
 
-    Activo.create({codigo, fechaIncorporacion, fechaRegistro, ufvId, grupoId, auxiliarId, oficinaId, usuarioId, estadoActivo, costoInicial, observaciones, estado, descripcion})
+    Activo.create({codigo, fechaIncorporacion, fechaRegistro, ufvId, grupoId, auxiliarId, oficinaId, usuarioId, estadoActivo, costoInicial, observaciones, estado, descripcion, imagePath})
         .then(user => res.json({msg: 'User added Successfully'}))
         .catch(err => res.json({error: err.code, errmsg: err.message}))
         // .catch(err => res.status(404).json({ error: err.code === 11000 ? 'Nombre de Usuario ya esta en uso' : 'No se pudo crear el usuario error desconocido'}))    
@@ -123,10 +153,12 @@ router.post('/', async (req, res) => {
 
 // @route PUT api/users/:id
 // @description update a book by id
-router.put('/:id', async(req, res) => {
+router.put('/:id',upload.single('imagePath'), async(req, res) => {
     // Hashing the passwords
     
     const {fechaIncorporacion, fechaRegistro, ufvId, grupoId, auxiliarId, oficinaId, usuarioId, estadoActivo, costoInicial, observaciones, estado, descripcion, _id} = req.body
+
+    const imagePath = req.file.path
 
     var codigoL = await Grupo.findOne({_id: grupoId})
     .then(grupo => {
@@ -209,7 +241,7 @@ router.put('/:id', async(req, res) => {
         return res.json({status: 'error', error: 'Codigo No Valido o Nulo'})
     }
 
-    Activo.findByIdAndUpdate(req.params.id, {codigo, fechaIncorporacion, fechaRegistro, ufvId, grupoId, auxiliarId, oficinaId, usuarioId, estadoActivo, costoInicial, observaciones, estado, descripcion})
+    Activo.findByIdAndUpdate(req.params.id, {codigo, fechaIncorporacion, fechaRegistro, ufvId, grupoId, auxiliarId, oficinaId, usuarioId, estadoActivo, costoInicial, observaciones, estado, descripcion, imagePath})
         .then(user => res.json({msg: 'Updated Succesfully'}))
         .catch(err => res.status(404).json({ error: 'No se pudo actualizar la base de datos'}))    
 })
