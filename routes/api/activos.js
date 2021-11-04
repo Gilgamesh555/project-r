@@ -158,7 +158,16 @@ router.put('/:id',upload.single('imagePath'), async(req, res) => {
     
     const {fechaIncorporacion, fechaRegistro, ufvId, grupoId, auxiliarId, oficinaId, usuarioId, estadoActivo, costoInicial, observaciones, estado, descripcion, _id} = req.body
 
-    const imagePath = req.file.path
+    var imagePath
+
+    if(req.file) {
+        imagePath = req.file.path
+    } else {
+        imagePath = await Activo.findOne({_id: _id})
+        .then(activo => {
+            return activo.imagePath
+        })
+    }
 
     var codigoL = await Grupo.findOne({_id: grupoId})
     .then(grupo => {
