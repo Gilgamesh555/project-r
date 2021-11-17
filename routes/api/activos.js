@@ -72,15 +72,16 @@ router.post('/', upload.single('imagePath'), async (req, res) => {
         return auxiliar.codigo
     })
     
-    var codigo = await Activo.findOne({grupoId: grupoId, auxiliarId: auxiliarId})
-        .then(activo => {
-            if(activo === null) {
-                return 1001
-            }else{
-                return parseInt(activo.codigo.split('-')[1])+1
-            }
-        })
+    var codigo = await Activo.findOne({grupoId: grupoId, auxiliarId: auxiliarId}, {}, { sort: { 'codigo' : -1 } })
+    .then(activo => {
+        if(activo === null) {
+            return 1001
+        }else{
+            return parseInt(activo.codigo.split('-')[1])+1
+        }
+    })
     
+
     codigo = codigoL+codigoN+'-'+codigo
 
     // Conditions
