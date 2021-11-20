@@ -46,7 +46,7 @@ router.post('/login', async (req, res) => {
                 role: user.role
             }, 
             JWTSECRET,
-            {expiresIn: '1h'}
+            {expiresIn: '3h'}
         )
 
         return res.json({status: 'ok', data: token})
@@ -117,9 +117,9 @@ router.post('/', async (req, res) => {
         return res.json({status: 'error', error: 'Apellido Materno invalido o nulo'})
     }
 
-    if(!apPaterno || typeof apPaterno !== 'string'){
+    /*if(!apPaterno || typeof apPaterno !== 'string'){
         return res.json({status: 'error', error: 'Apellido Paterno invalido o nulo'})
-    }
+    }*/
 
     if(!nombre || typeof nombre !== 'string'){
         return res.json({status: 'error', error: 'Nombre Invalido o Nulo'})
@@ -134,7 +134,7 @@ router.post('/', async (req, res) => {
 
     const password = await bcrypt.hash(plainTxtPassword, 10)
 
-    User.create({username, password, role, nombre, apPaterno, apMaterno, ci, cargo, email, celular, estado, oficinaId})
+    User.create({username, password, role, nombre, apMaterno, ci, cargo, email, celular, estado, oficinaId})
         .then(user => res.json({msg: 'User added Successfully'}))
         .catch(err => res.json({error: err.code, errmsg: err.message}))
         // .catch(err => res.status(404).json({ error: err.code === 11000 ? 'Nombre de Usuario ya esta en uso' : 'No se pudo crear el usuario error desconocido'}))    

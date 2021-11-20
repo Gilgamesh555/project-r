@@ -26,7 +26,8 @@ const UserSchema = new mongoose.Schema({
     },
     ci: {
         type: String,
-        required: true
+        required: true,
+        unique: true,
     },
     cargo: {
         type: String,
