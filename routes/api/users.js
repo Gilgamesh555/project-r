@@ -32,7 +32,7 @@ router.post('/login', async (req, res) => {
     
     const user = await User.findOne({username}).lean()
 
-    if(!user) {
+    if(!user || user.estado === "inactivo") {
         return res.json({status: 'error', error: 'Invalid Username or Password'})
     }
 
@@ -57,7 +57,8 @@ router.post('/login', async (req, res) => {
 
 // @route GET api/users/
 // @description get all user
-router.get('/', (req, res) => {
+router.get('/', async(req, res) => {
+
     User.find()
         .then(users => res.json(users))
         .catch(err => res.status(404).json({ nousersfound: 'Usuarios no encontrados'}))    

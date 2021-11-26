@@ -54,6 +54,7 @@ router.post('/', async (req, res) => {
 // @route PUT api/oficinas/:id
 // @description update a oficina by id
 router.put('/:id', (req, res) => {
+    
     Oficina.findByIdAndUpdate(req.params.id, req.body)
         .then(oficina => res.json({ msg: 'Updated Succesfully' }))
         .catch(err => res.json({ error: 'No se pudo actualizar la base de datos' }))
