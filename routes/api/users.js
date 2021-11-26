@@ -32,8 +32,14 @@ router.post('/login', async (req, res) => {
     
     const user = await User.findOne({username}).lean()
 
-    if(!user || user.estado === "inactivo") {
-        return res.json({status: 'error', error: 'Invalid Username or Password'})
+    // Fixed User Inactive
+    if(!user) {
+        return res.json({status: 'error', error: 'Nombre de Usuario o Contraseña Incorrectos'})
+    }
+
+    if (user.estado === "inactivo" )
+    {
+        return res.json({status: 'error', error: 'El Usuario Se Encuentra Inactivo'})
     }
 
     if(await bcrypt.compare(password, user.password)) {

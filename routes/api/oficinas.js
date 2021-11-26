@@ -33,6 +33,7 @@ router.post('/', async (req, res) => {
 
     const { nombre, estado } = req.body
 
+    // Add code to Oficina
     var codigo = nombre.toLowerCase().substr(0, 3);
 
     var codigoOficina = await Oficina.findOne({}, {}, { sort: { '_id' : -1 } })
@@ -54,7 +55,7 @@ router.post('/', async (req, res) => {
 // @route PUT api/oficinas/:id
 // @description update a oficina by id
 router.put('/:id', (req, res) => {
-    
+
     Oficina.findByIdAndUpdate(req.params.id, req.body)
         .then(oficina => res.json({ msg: 'Updated Succesfully' }))
         .catch(err => res.json({ error: 'No se pudo actualizar la base de datos' }))
