@@ -58,7 +58,7 @@ router.post('/login', async (req, res) => {
         return res.json({status: 'ok', data: token})
     }
 
-    return res.json({status: 'error', error: 'Invalid Username/Password'})
+    return res.json({status: 'error', error: 'Usuario o Contraseña invalido'})
 })
 
 // @route GET api/users/
