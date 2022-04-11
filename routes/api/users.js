@@ -90,7 +90,7 @@ router.post('/', async (req, res) => {
         return res.json({status: 'error', error: 'Nombre de Usuario No Valido o Nulo'})
     }
     if(!plainTxtPassword || typeof plainTxtPassword !== 'string'){
-        return res.json({status: 'error', error: `Contraseña Invalida, Debe tener al menos 5 caracteres, al menos una letra minuscula y al menos un numero ${plainTxtPassword}`})
+        return res.json({status: 'error', error: `Password no valido`})
     }
     if(!role || typeof role !== 'string'){
         return res.json({status: 'error', error: 'Escoja un rol por favor'})
@@ -135,13 +135,14 @@ router.post('/', async (req, res) => {
     if(!username.match(/^[a-z][^\W_]{3,14}$/i)){
         return res.json({status: 'error', error: 'Nombre de Usuario no Valido'})
     }
-    if(!plainTxtPassword.match(/^(?=[^a-z]*[a-z])(?=\D*\d)[^:&.~\s]{3,20}$/)){
-        return res.json({status: 'error', error: 'Contraseña Invalida, Debe tener al menos 5 caracteres, al menos una letra minuscula y al menos un numero'})
+    console.log(plainTxtPassword);
+    if(!plainTxtPassword.match(/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/)){
+        return res.json({status: 'error', error: 'Contraseña Invalida, Debe tener al menos 8 caracteres, al menos una letra y al menos un numero'})
     }
 
     const password = await bcrypt.hash(plainTxtPassword, 10)
 
-    User.create({username, password, role, nombre, apMaterno, ci, cargo, email, celular, estado, oficinaId})
+    User.create({username, password, role, nombre, apPaterno, apMaterno, ci, cargo, email, celular, estado, oficinaId})
         .then(user => res.json({msg: 'User added Successfully'}))
         .catch(err => res.json({error: err.code, errmsg: err.message}))
         // .catch(err => res.status(404).json({ error: err.code === 11000 ? 'Nombre de Usuario ya esta en uso' : 'No se pudo crear el usuario error desconocido'}))    
@@ -204,8 +205,8 @@ router.put('/:id', async(req, res) => {
     // if(!username.match(/^[a-z][^\W_]{3,14}$/i)){
     //     return res.json({status: 'error', error: 'Nombre de Usuario no Valido'})
     // }
-    if(!plainTxtPassword.match(/^(?=[^a-z]*[a-z])(?=\D*\d)[^:&.~\s]{3,20}$/)){
-        return res.json({status: 'error', error: 'Contraseña Invalida, Debe tener al menos 5 caracteres, al menos una letra minuscula y al menos un numero'})
+    if(!plainTxtPassword.match(/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/)){
+        return res.json({status: 'error', error: 'Contraseña Invalida, Debe tener al menos 8 caracteres, al menos una letra y al menos un numero'})
     }
 
     const password = await bcrypt.hash(plainTxtPassword, 10)

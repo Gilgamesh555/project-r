@@ -14,6 +14,9 @@ const grupos = require('./routes/api/grupos')
 const auxiliares = require('./routes/api/auxiliares')
 const activos = require('./routes/api/activos')
 const ufv = require('./routes/api/ufv')
+const roles = require('./routes/api/roles');
+const views = require('./routes/api/views');
+const roleViews = require('./routes/api/roleviews');
 
 const app = express()
 
@@ -40,6 +43,9 @@ app.use('/api/auxiliares', auxiliares)
 app.use('/api/activos', activos)
 app.use('/api/ufv', ufv)
 app.use('/uploadActivos', express.static('uploadActivos'))
+app.use('/api/roles', roles);
+app.use('/api/views', views);
+app.use('/api/roleviews', roleViews);
 
 const port = process.env.PORT || 8002
 
