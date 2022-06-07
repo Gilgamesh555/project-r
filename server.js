@@ -17,6 +17,7 @@ const ufv = require('./routes/api/ufv')
 const roles = require('./routes/api/roles');
 const views = require('./routes/api/views');
 const roleViews = require('./routes/api/roleviews');
+const cargos =  require('./routes/api/cargos');
 
 const app = express()
 
@@ -46,6 +47,7 @@ app.use('/uploadActivos', express.static('uploadActivos'))
 app.use('/api/roles', roles);
 app.use('/api/views', views);
 app.use('/api/roleviews', roleViews);
+app.use('/api/cargos', cargos);
 
 const port = process.env.PORT || 8002
 
