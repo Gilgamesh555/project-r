@@ -19,6 +19,7 @@ const views = require('./routes/api/views');
 const roleViews = require('./routes/api/roleviews');
 const cargos =  require('./routes/api/cargos');
 const logs = require('./routes/api/logs');
+const activoBaja = require('./routes/api/activoBaja');
 
 const app = express()
 
@@ -45,11 +46,13 @@ app.use('/api/auxiliares', auxiliares)
 app.use('/api/activos', activos)
 app.use('/api/ufv', ufv)
 app.use('/uploadActivos', express.static('uploadActivos'))
+app.use('/uploadActivosBajaReports', express.static('uploadActivosBajaReports'))
 app.use('/api/roles', roles);
 app.use('/api/views', views);
 app.use('/api/roleviews', roleViews);
 app.use('/api/cargos', cargos);
 app.use('/api/logs', logs);
+app.use('/api/activoBaja', activoBaja);
 
 const port = process.env.PORT || 8002
 
