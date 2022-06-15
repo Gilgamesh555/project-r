@@ -9,6 +9,8 @@ const Activo = require('../../models/Activo')
 const { json } = require('body-parser')
 const Grupo = require('../../models/Grupo')
 const Auxiliar = require('../../models/Auxiliar')
+const Log = require('../../models/Log')
+const User = require('../../models/User')
 
 
 const multer = require('multer')
@@ -146,9 +148,27 @@ router.post('/', upload.single('imagePath'), async (req, res) => {
     // }
 
 
-    Activo.create({ codigo, fechaIncorporacion, fechaRegistro, ufvId, grupoId, auxiliarId, oficinaId, usuarioId, estadoActivo, costoInicial, observaciones, estado, descripcion, imagePath })
-        .then(user => res.json({ msg: 'User added Successfully' }))
+    await Activo.create({ codigo, fechaIncorporacion, fechaRegistro, ufvId, grupoId, auxiliarId, oficinaId, usuarioId, estadoActivo, costoInicial, observaciones, estado, descripcion, imagePath })
+        .then(activo => {
+            var today = new Date();
+            var dd = String(today.getDate()).padStart(2, '0');
+            var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
+            var yyyy = today.getFullYear();
+            today = yyyy + '-' + mm + '-' + dd;
+
+            Log.create({
+                userId: usuarioId,
+                activoId: activo._id,
+                description: `creo el activo con un costo inicial de ${activo.costoInicial}`,
+                date: today
+            })
+
+            return res.json({ msg: 'User added Successfully' })
+        })
         .catch(err => res.json({ error: err.code, errmsg: err.message }))
+
+    // const newActivo = await Activo.find({}, {}, { sort: { 'date': -1 } })
+    // console.log(newActivo);
     // .catch(err => res.status(404).json({ error: err.code === 11000 ? 'Nombre de Usuario ya esta en uso' : 'No se pudo crear el usuario error desconocido'}))    
 })
 
@@ -158,9 +178,31 @@ router.put('/modify', async (req, res) => {
     // Hashing the passwords
     const actives = await Activo.find({ usuarioId: req.body.firstUserId });
 
+    const { usuarioId, firstUserId, secondUserId } = req.body;
+
     actives.map(active => {
         Activo.findByIdAndUpdate(active._id, { usuarioId: req.body.secondUserId })
-            .then(active => res.json({ msg: 'Updated Succesfully' }))
+            .then(async active => {
+                var today = new Date();
+                var dd = String(today.getDate()).padStart(2, '0');
+                var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
+                var yyyy = today.getFullYear();
+                today = yyyy + '-' + mm + '-' + dd;
+
+                const oldUser = await User.findById(firstUserId);
+                const newUser = await User.findById(secondUserId);
+
+                const oldUserName = `${oldUser.nombre} ${oldUser.apPaterno} ${oldUser.apMaterno}`;
+                const newUserName = `${newUser.nombre} ${newUser.apPaterno} ${newUser.apMaterno}`;
+
+                Log.create({
+                    userId: usuarioId,
+                    activoId: active._id,
+                    description: `cambio al encargado del activo ${oldUserName} por el nuevo encargado ${newUserName}`,
+                    date: today
+                })
+                return res.json({ msg: 'User added Successfully' })
+            })
             .catch(err => res.status(404).json({ error: err.message }))
     })
 })
@@ -265,16 +307,49 @@ router.put('/:id', upload.single('imagePath'), async (req, res) => {
     }
 
     Activo.findByIdAndUpdate(req.params.id, { codigo, fechaIncorporacion, fechaRegistro, ufvId, grupoId, auxiliarId, oficinaId, usuarioId, estadoActivo, costoInicial, observaciones, estado, descripcion, imagePath })
-        .then(user => res.json({ msg: 'Updated Succesfully' }))
+        .then(user => {
+            var today = new Date();
+            var dd = String(today.getDate()).padStart(2, '0');
+            var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
+            var yyyy = today.getFullYear();
+            today = yyyy + '-' + mm + '-' + dd;
+
+            Log.create({
+                userId: usuarioId,
+                activoId: user._id,
+                description: `modifico el activo`,
+                date: today
+            })
+            return res.json({ msg: 'Updated Succesfully' })
+        })
         .catch(err => res.status(404).json({ error: 'No se pudo actualizar la base de datos' }))
 })
 
 // @route PUT api/users/:id
 // @description update a book by id
 router.put('/:id/estado', async (req, res) => {
+    const { usuarioId } = req.body
+
     // Hashing the passwords
     Activo.findByIdAndUpdate(req.params.id, req.body)
-        .then(user => res.json({ msg: 'Updated Succesfully' }))
+        .then(activo => {
+            var today = new Date();
+            var dd = String(today.getDate()).padStart(2, '0');
+            var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
+            var yyyy = today.getFullYear();
+            today = yyyy + '-' + mm + '-' + dd;
+
+            const estado = activo.estado === 'activo' ? 'inactivo' : 'activo';
+
+            Log.create({
+                userId: usuarioId,
+                activoId: activo._id,
+                description: `modifico el estado del activo a ${estado}`,
+                date: today
+            })
+
+            return res.json({ msg: 'Updated Succesfully' })
+        })
         .catch(err => res.status(404).json({ error: err.message }))
 })
 
@@ -282,7 +357,21 @@ router.put('/:id/estado', async (req, res) => {
 // @description delete a book by id
 router.delete('/:id', (req, res) => {
     Activo.findByIdAndRemove(req.params.id, req.body)
-        .then(user => res.json({ msg: 'User entry deleted successfully' }))
+        .then(activo => {
+            var today = new Date();
+            var dd = String(today.getDate()).padStart(2, '0');
+            var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
+            var yyyy = today.getFullYear();
+            today = yyyy + '-' + mm + '-' + dd;
+
+            Log.create({
+                userId: usuarioId,
+                activoId: activo._id,
+                description: `elimino el activo`,
+                date: today
+            })
+            return res.json({ msg: 'User entry deleted successfully' })
+        })
         .catch(err => res.status(404).json({ error: 'El Usuario no Existe' }))
 })
 

@@ -18,6 +18,7 @@ const roles = require('./routes/api/roles');
 const views = require('./routes/api/views');
 const roleViews = require('./routes/api/roleviews');
 const cargos =  require('./routes/api/cargos');
+const logs = require('./routes/api/logs');
 
 const app = express()
 
@@ -48,6 +49,7 @@ app.use('/api/roles', roles);
 app.use('/api/views', views);
 app.use('/api/roleviews', roleViews);
 app.use('/api/cargos', cargos);
+app.use('/api/logs', logs);
 
 const port = process.env.PORT || 8002
 

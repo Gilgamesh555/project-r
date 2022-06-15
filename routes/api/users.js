@@ -135,7 +135,6 @@ router.post('/', async (req, res) => {
     if(!username.match(/^[a-z][^\W_]{3,14}$/i)){
         return res.json({status: 'error', error: 'Nombre de Usuario no Valido'})
     }
-    console.log(plainTxtPassword);
     if(!plainTxtPassword.match(/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/)){
         return res.json({status: 'error', error: 'Contraseña Invalida, Debe tener al menos 8 caracteres, al menos una letra y al menos un numero'})
     }
