@@ -49,7 +49,7 @@ router.post('/', async (req, res) => {
 
     Oficina.create({ nombre, codigo, estado })
         .then(oficina => res.json({ msg: 'Oficina added Successfully' }))
-        .catch(err => res.json({ error: err.code === 11000 ? 'Nombre de Usuario ya esta en uso' : 'No se pudo crear el usuario error desconocido' }))
+        .catch(err => res.json({ error: err.code === 11000 ? 'Nombre de Departamento ya esta en uso' : 'No se pudo crear el usuario error desconocido' }))
 })
 
 // @route PUT api/oficinas/:id
