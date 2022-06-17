@@ -3,15 +3,16 @@ const config = require('config')
 const db = config.get('mongoURI')
 
 const connectDB = async () => {
-    try{
+    try {
         await moongose.connect(
             db,
             {
-                useNewUrlParser: true
+                useNewUrlParser: true,
+                autoIndex: true,
             }
         )
         console.log('MongoDB is connected...')
-    } catch(err) {
+    } catch (err) {
         console.error(err.message)
         process.exit(1)
     }
