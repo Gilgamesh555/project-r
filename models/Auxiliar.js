@@ -1,4 +1,5 @@
 const mongoose = require('mongoose')
+const mongoosePaginate = require('mongoose-paginate-v2');
 
 const AuxiliarSchema = new mongoose.Schema({
     nombre: {
@@ -23,5 +24,7 @@ const AuxiliarSchema = new mongoose.Schema({
         required: true,
     }
 })
+
+AuxiliarSchema.plugin(mongoosePaginate)
 
 module.exports = Auxiliar = mongoose.model('auxiliar', AuxiliarSchema)

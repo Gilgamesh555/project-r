@@ -13,6 +13,17 @@ router.get('/', (req, res) => {
         .catch(err => res.status(404).json({ noCargosFound: 'Cargos no encontrados' }));
 })
 
+// @route GET api/roles/
+// @description get all user
+router.get('/all', (req, res) => {
+    Cargo.paginate({}, {
+        limit: 5,
+        page: req.query.pageNumber ?? 0
+    })
+    .then(cargos => res.json(cargos))
+    .catch(err => res.status(404).json({ noCargosFound: 'Cargos no encontrados' }));
+})
+
 // @route GET api/roles/:id
 // @description get single oficina by id
 router.get('/:id', (req, res) => {

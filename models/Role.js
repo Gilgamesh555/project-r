@@ -1,4 +1,5 @@
 const mongoose = require('mongoose')
+const mongoosePaginate = require('mongoose-paginate-v2');
 
 const RoleSchema = new mongoose.Schema({
     name: {
@@ -19,5 +20,7 @@ const RoleSchema = new mongoose.Schema({
         required: true,
     }
 })
+
+RoleSchema.plugin(mongoosePaginate);
 
 module.exports = Oficina = mongoose.model('role', RoleSchema)

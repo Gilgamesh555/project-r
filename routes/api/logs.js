@@ -9,7 +9,7 @@ const { json } = require('body-parser')
 // @route GET api/activos/
 // @description get all activos
 router.get('/', (req, res) => {
-    Log.find()
+    Log.paginate({}, {})
         .then(activos => res.json(activos))
         .catch(err => res.status(404).json({ noactivosfound: 'Usuarios no encontrados' }))
 })
@@ -26,9 +26,14 @@ router.get('/getByDate', (req, res) => {
 // @route GET api/activos/
 // @description get all activos
 router.get('/getByActivo/:id', (req, res) => {
-    Log.find({'activoId': req.params.id})
-        .then(activos => res.json(activos))
-        .catch(err => res.status(404).json({ noactivosfound: 'Usuarios no encontrados' }))
+    Log.paginate({
+        'activoId': req.params.id
+    } ,{
+        limit: 5,
+        page: req.query.pageNumber ?? 0
+    })
+    .then(activos => res.json(activos))
+    .catch(err => res.status(404).json({ noactivosfound: 'Usuarios no encontrados' }))
 })
 
 // @route POST api/grupos
@@ -52,7 +57,9 @@ router.post('/', async (req, res) => {
         return res.json({ status: 'error', error: 'date No Valido o Nulo' })
     }
 
-    Log.create({ userId, description, date, activoId })
+    var today = new Date();
+
+    Log.create({ userId, description, today, activoId })
         .then(user => res.json({ msg: 'Log added Successfully' }))
         .catch(err => res.json({ error: err.code, errmsg: err.message }))
 })

@@ -1,4 +1,5 @@
 const mongoose = require('mongoose')
+const mongoosePaginate = require('mongoose-paginate-v2');
 
 const StandSchema = new mongoose.Schema({
     name: {
@@ -14,5 +15,7 @@ const StandSchema = new mongoose.Schema({
         required: true,
     }
 })
+
+StandSchema.plugin(mongoosePaginate);
 
 module.exports = Stand = mongoose.model('stand', StandSchema)

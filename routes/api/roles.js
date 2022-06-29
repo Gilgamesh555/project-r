@@ -15,6 +15,17 @@ router.get('/', (req, res) => {
         .catch(err => res.status(404).json({ norolesfound: 'Roles no encontrados' }));
 })
 
+// @route GET api/roles/
+// @description get all user
+router.get('/all', (req, res) => {
+    Role.paginate({}, {
+        limit: 5,
+        page: req.query.pageNumber ?? 0
+    })
+    .then(roles => res.json(roles))
+    .catch(err => res.status(404).json({ norolesfound: 'Roles no encontrados' }));
+})
+
 // @route GET api/roles/getWithNameViews
 // @description get views by roleId and viewId
 router.get('/getWithNameViews', async (req, res) => {

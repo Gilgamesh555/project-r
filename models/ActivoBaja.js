@@ -1,4 +1,5 @@
 const mongoose = require('mongoose')
+const mongoosePaginate = require('mongoose-paginate-v2');
 
 const ActivoBajaSchema = new mongoose.Schema({
     userId: {
@@ -22,5 +23,7 @@ const ActivoBajaSchema = new mongoose.Schema({
         required: true,
     }
 })
+
+ActivoBajaSchema.plugin(mongoosePaginate)
 
 module.exports = ActivoBaja = mongoose.model('activoBaja', ActivoBajaSchema)

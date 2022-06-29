@@ -70,6 +70,18 @@ router.get('/', async(req, res) => {
         .catch(err => res.status(404).json({ nousersfound: 'Usuarios no encontrados'}))    
 })
 
+// @route GET api/users/
+// @description get all user
+router.get('/all', async(req, res) => {
+    User.paginate({}, {
+        limit: 5,
+        page: req.query.pageNumber ?? 0
+    })
+    .then(users => res.json(users))
+    .catch(err => res.status(404).json({ nousersfound: 'Usuarios no encontrados'}))    
+})
+
+
 // @route GET api/users/:id
 // @description get single user by id
 router.get('/:id', (req, res) => {

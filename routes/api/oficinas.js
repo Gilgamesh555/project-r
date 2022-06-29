@@ -18,6 +18,17 @@ router.get('/', (req, res) => {
         .catch(err => res.status(404).json({ nousersfound: 'Usuarios no encontrados' }))
 })
 
+// @route GET api/oficinas/
+// @description get all user
+router.get('/all', (req, res) => {
+    Oficina.paginate({}, {
+        limit: 5,
+        page: req.query.pageNumber ?? 0
+    })
+    .then(oficinas => res.json(oficinas))
+    .catch(err => res.status(404).json({ nousersfound: 'Usuarios no encontrados' }))
+})
+
 // @route GET api/oficinas/:id
 // @description get single oficina by id
 router.get('/:id', (req, res) => {

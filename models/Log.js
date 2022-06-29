@@ -1,4 +1,5 @@
 const mongoose = require('mongoose')
+const mongoosePaginate = require('mongoose-paginate-v2');
 
 const LogSchema = new mongoose.Schema({
     userId: {
@@ -18,5 +19,7 @@ const LogSchema = new mongoose.Schema({
         required: true,
     }
 })
+
+LogSchema.plugin(mongoosePaginate);
 
 module.exports = Grupo = mongoose.model('logs', LogSchema)

@@ -39,6 +39,17 @@ router.get('/', (req, res) => {
         .catch(err => res.status(404).json({ nousersfound: 'Grupos no encontrados'}))    
 })
 
+// @route GET api/grupos/
+// @description get all grupos
+router.get('/all', (req, res) => {
+    Grupo.paginate({}, {
+        limit: 5,
+        page: req.query.pageNumber ?? 0
+    })
+    .then(users => res.json(users))
+    .catch(err => res.status(404).json({ nousersfound: 'Grupos no encontrados'}))    
+})
+
 // @route GET api/grupos/:id
 // @description get single grupo by id
 router.get('/:id', (req, res) => {

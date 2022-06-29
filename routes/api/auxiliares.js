@@ -29,6 +29,17 @@ router.get('/', (req, res) => {
         .catch(err => res.status(404).json({ nousersfound: 'Auxiliares no encontrados'}))    
 })
 
+// @route GET api/auxiliares/
+// @description get all auxiliares
+router.get('/all', (req, res) => {
+    Auxiliar.paginate({}, {
+        limit: 5,
+        page: req.query.pageNumber ?? 0
+    })
+        .then(users => res.json(users))
+        .catch(err => res.status(404).json({ nousersfound: 'Auxiliares no encontrados'}))    
+})
+
 // @route GET api/Auxiliares/:id
 // @description get single Auxiliar by id
 router.get('/:id', (req, res) => {

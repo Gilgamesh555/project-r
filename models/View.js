@@ -1,4 +1,5 @@
 const mongoose = require('mongoose')
+const mongoosePaginate = require('mongoose-paginate-v2');
 
 const ViewSchema = new mongoose.Schema({
     name: {
@@ -10,5 +11,7 @@ const ViewSchema = new mongoose.Schema({
         required: true,
     }
 })
+
+ViewSchema.plugin(mongoosePaginate);
 
 module.exports = Oficina = mongoose.model('view', ViewSchema)

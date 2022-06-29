@@ -27,6 +27,17 @@ router.get('/', (req, res) => {
         .catch(err => res.status(404).json({ nousersfound: 'Ufvs no encontrados'}))    
 })
 
+// @route GET api/ufvs/
+// @description get all ufvs
+router.get('/all', (req, res) => {
+    Ufv.paginate({}, {
+        limit: 5,
+        page: req.query.pageNumber ?? 0
+    })
+        .then(users => res.json(users))
+        .catch(err => res.status(404).json({ nousersfound: 'Ufvs no encontrados'}))    
+})
+
 // @route GET api/ufvs/:id
 // @description get single ufv by id
 router.get('/:id', (req, res) => {

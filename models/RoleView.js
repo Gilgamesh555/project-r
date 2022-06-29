@@ -1,4 +1,5 @@
 const mongoose = require('mongoose')
+const mongoosePaginate = require('mongoose-paginate-v2');
 
 const RoleViewSchema = new mongoose.Schema({
     roleId: {
@@ -26,6 +27,8 @@ const RoleViewSchema = new mongoose.Schema({
         required: true,
     }
 });
+
+RoleViewSchema.plugin(mongoosePaginate);
 
 RoleViewSchema.index({roleId: 1, viewId: 1}, {unique: true});
 

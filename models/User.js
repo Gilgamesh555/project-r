@@ -1,4 +1,5 @@
 const mongoose = require('mongoose')
+const mongoosePaginate = require('mongoose-paginate-v2');
 
 const UserSchema = new mongoose.Schema({
     username: {
@@ -51,5 +52,7 @@ const UserSchema = new mongoose.Schema({
         required: true
     },
 })
+
+UserSchema.plugin(mongoosePaginate);
 
 module.exports = Activo = mongoose.model('user', UserSchema)

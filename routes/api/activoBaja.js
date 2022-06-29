@@ -87,7 +87,7 @@ router.post('/', upload.single('imagePath'), async (req, res) => {
             var dd = String(today.getDate()).padStart(2, '0');
             var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
             var yyyy = today.getFullYear();
-            today = yyyy + '-' + mm + '-' + dd;
+            // today = yyyy + '-' + mm + '-' + dd;
 
             Log.create({
                 userId: usuarioId,
@@ -110,12 +110,12 @@ router.delete('/:id', (req, res) => {
             var dd = String(today.getDate()).padStart(2, '0');
             var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
             var yyyy = today.getFullYear();
-            today = yyyy + '-' + mm + '-' + dd;
+            // today = yyyy + '-' + mm + '-' + dd;
 
             Log.create({
                 userId: usuarioId,
                 activoId: activo._id,
-                description: `elimino el activo`,
+                description: `elimino el activo.`,
                 date: today
             })
             return res.json({ msg: 'User entry deleted successfully' })

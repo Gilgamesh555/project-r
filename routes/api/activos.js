@@ -47,10 +47,31 @@ router.get('/', (req, res) => {
         .catch(err => res.status(404).json({ noactivosfound: 'Usuarios no encontrados' }))
 })
 
+// @route GET api/activos/
+// @description get all activos
+router.get('/all', (req, res) => {
+    Activo.paginate({}, {
+        limit: 5,
+        page: req.query.pageNumber ?? 0
+    })
+        .then(activos => res.json(activos))
+        .catch(err => res.status(404).json({ noactivosfound: 'Usuarios no encontrados' }))
+})
+
 // @route GET api/activos/:id
 // @description get single activo by id
 router.get('/:id', (req, res) => {
     Activo.findById(req.params.id)
+        .then(activo => res.json(activo))
+        .catch(err => res.status(404).json({ noactivosfound: 'Usuario no encontrado' }))
+})
+
+// @route GET api/activos/:id
+// @description get single activo by id
+router.get('/userId/:userId', (req, res) => {
+    Activo.find({
+        'usuarioId': req.params.userId
+    })
         .then(activo => res.json(activo))
         .catch(err => res.status(404).json({ noactivosfound: 'Usuario no encontrado' }))
 })
@@ -154,12 +175,15 @@ router.post('/', upload.single('imagePath'), async (req, res) => {
             var dd = String(today.getDate()).padStart(2, '0');
             var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
             var yyyy = today.getFullYear();
-            today = yyyy + '-' + mm + '-' + dd;
+            // today = yyyy + '-' + mm + '-' + dd;
 
             Log.create({
                 userId: usuarioId,
                 activoId: activo._id,
-                description: `creo el activo con un costo inicial de ${activo.costoInicial}`,
+                description: `creo el activo con un costo inicial de ${activo.costoInicial}.\n
+                            Con un estado ${activo.estadoActivo}.\n
+                            Observaciones: ${activo.observaciones}.\n
+                            Descripcion: ${activo.descripcion}`,
                 date: today
             })
 
@@ -176,34 +200,37 @@ router.post('/', upload.single('imagePath'), async (req, res) => {
 // @description update a book by id
 router.put('/modify', async (req, res) => {
     // Hashing the passwords
-    const actives = await Activo.find({ usuarioId: req.body.firstUserId });
+    const { actives } = req.body;
 
     const { usuarioId, firstUserId, secondUserId } = req.body;
 
     actives.map(active => {
-        Activo.findByIdAndUpdate(active._id, { usuarioId: req.body.secondUserId })
-            .then(async active => {
-                var today = new Date();
-                var dd = String(today.getDate()).padStart(2, '0');
-                var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
-                var yyyy = today.getFullYear();
-                today = yyyy + '-' + mm + '-' + dd;
+        if (active) {
+            Activo.findByIdAndUpdate(active._id, { usuarioId: req.body.secondUserId })
+                .then(async active => {
+                    var today = new Date();
+                    var dd = String(today.getDate()).padStart(2, '0');
+                    var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
+                    var yyyy = today.getFullYear();
+                    // today = yyyy + '-' + mm + '-' + dd;
 
-                const oldUser = await User.findById(firstUserId);
-                const newUser = await User.findById(secondUserId);
+                    const oldUser = await User.findById(firstUserId);
+                    const newUser = await User.findById(secondUserId);
 
-                const oldUserName = `${oldUser.nombre} ${oldUser.apPaterno} ${oldUser.apMaterno}`;
-                const newUserName = `${newUser.nombre} ${newUser.apPaterno} ${newUser.apMaterno}`;
+                    const oldUserName = `${oldUser.nombre} ${oldUser.apPaterno} ${oldUser.apMaterno}`;
+                    const newUserName = `${newUser.nombre} ${newUser.apPaterno} ${newUser.apMaterno}`;
 
-                Log.create({
-                    userId: usuarioId,
-                    activoId: active._id,
-                    description: `cambio al encargado del activo ${oldUserName} por el nuevo encargado ${newUserName}`,
-                    date: today
+                    Log.create({
+                        userId: usuarioId,
+                        activoId: active._id,
+                        description: `cambio al encargado del activo con Nombre: ${oldUserName}.\n
+                                Por el nuevo encargado con Nombre: ${newUserName}`,
+                        date: today
+                    })
+                    return res.json({ msg: 'User added Successfully' })
                 })
-                return res.json({ msg: 'User added Successfully' })
-            })
-            .catch(err => res.status(404).json({ error: err.message }))
+                .catch(err => res.status(404).json({ error: err.message }))
+        }
     })
 })
 
@@ -312,12 +339,12 @@ router.put('/:id', upload.single('imagePath'), async (req, res) => {
             var dd = String(today.getDate()).padStart(2, '0');
             var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
             var yyyy = today.getFullYear();
-            today = yyyy + '-' + mm + '-' + dd;
+            // today = yyyy + '-' + mm + '-' + dd;
 
             Log.create({
                 userId: usuarioId,
                 activoId: user._id,
-                description: `modifico el activo`,
+                description: `modifico el activo.\nCosto Inicial: ${user.costoInicial}.\nEstado Activo: ${user.estadoActivo}.\nEstado: ${user.estado}.\nObservaciones: ${user.observaciones}.\nDescripcion: ${user.descripcion}.`,
                 date: today
             })
             return res.json({ msg: 'Updated Succesfully' })
@@ -337,7 +364,7 @@ router.put('/:id/estado', async (req, res) => {
             var dd = String(today.getDate()).padStart(2, '0');
             var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
             var yyyy = today.getFullYear();
-            today = yyyy + '-' + mm + '-' + dd;
+            // today = yyyy + '-' + mm + '-' + dd;
 
             const estado = activo.estado === 'activo' ? 'inactivo' : 'activo';
 
@@ -362,7 +389,7 @@ router.delete('/:id', (req, res) => {
             var dd = String(today.getDate()).padStart(2, '0');
             var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
             var yyyy = today.getFullYear();
-            today = yyyy + '-' + mm + '-' + dd;
+            // today = yyyy + '-' + mm + '-' + dd;
 
             Log.create({
                 userId: usuarioId,

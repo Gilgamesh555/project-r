@@ -1,4 +1,5 @@
 const mongoose = require('mongoose')
+const mongoosePaginate = require('mongoose-paginate-v2');
 
 const OficinaSchema = new mongoose.Schema({
     nombre: {
@@ -16,5 +17,7 @@ const OficinaSchema = new mongoose.Schema({
         required: true,
     }
 })
+
+OficinaSchema.plugin(mongoosePaginate);
 
 module.exports = Oficina = mongoose.model('oficina', OficinaSchema)

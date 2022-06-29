@@ -1,4 +1,5 @@
 const mongoose = require('mongoose')
+const mongoosePaginate = require('mongoose-paginate-v2');
 
 const ActivoSchema = new mongoose.Schema({
     codigo: {
@@ -67,5 +68,7 @@ const ActivoSchema = new mongoose.Schema({
     //     required: true,
     // }
 })
+
+ActivoSchema.plugin(mongoosePaginate);
 
 module.exports = Activo = mongoose.model('activo', ActivoSchema)
