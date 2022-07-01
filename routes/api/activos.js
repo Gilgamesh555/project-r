@@ -344,7 +344,7 @@ router.put('/:id', upload.single('imagePath'), async (req, res) => {
             Log.create({
                 userId: usuarioId,
                 activoId: user._id,
-                description: `modifico el activo.\nCosto Inicial: ${user.costoInicial}.\nEstado Activo: ${user.estadoActivo}.\nEstado: ${user.estado}.\nObservaciones: ${user.observaciones}.\nDescripcion: ${user.descripcion}.`,
+                description: `modifico el activo.\nCosto Inicial: ${costoInicial}.\nEstado Activo: ${estadoActivo}.\nEstado: ${estado}.\nObservaciones: ${observaciones}.\nDescripcion: ${descripcion}.`,
                 date: today
             })
             return res.json({ msg: 'Updated Succesfully' })
