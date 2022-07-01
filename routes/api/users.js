@@ -49,6 +49,9 @@ router.post('/login', async (req, res) => {
             {
                 id: user._id, 
                 username: user.username,
+                nombre: user.nombre,
+                apPaterno: user.apMaterno,
+                apMaterno: user.apMaterno,
                 role: user.role
             }, 
             JWTSECRET,
