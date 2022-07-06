@@ -101,59 +101,68 @@ router.post('/', async (req, res) => {
     const {username, password: plainTxtPassword, role, nombre, apPaterno, apMaterno, ci, cargo, email, celular, estado, oficinaId} = req.body
 
     // Conditions
-    if(!username || typeof username !== 'string'){
-        return res.json({status: 'error', error: 'Nombre de Usuario No Valido o Nulo'})
-    }
-    if(!plainTxtPassword || typeof plainTxtPassword !== 'string'){
-        return res.json({status: 'error', error: `Password no valido`})
-    }
-    if(!role || typeof role !== 'string'){
-        return res.json({status: 'error', error: 'Escoja un rol por favor'})
-    }
 
-    if(!oficinaId || typeof oficinaId !== 'string'){
-        return res.json({status: 'error', error: 'Escoga una oficina por favor'})
-    }
-
-    if(!estado || typeof estado !== 'string'){
-        return res.json({status: 'error', error: 'Estado Invalido o Nulo'})
-    }
-
-    if(!celular || typeof celular !== 'string'){
-        return res.json({status: 'error', error: 'Celular Invalido o Nulo'})
-    }
-
-    if(!email || typeof email !== 'string'){
-        return res.json({status: 'error', error: 'Email Invalido o Nulo'})
-    }
-
-    if(!cargo || typeof cargo !== 'string'){
-        return res.json({status: 'error', error: 'cargo invalido o nulo'})
-    }
-
-    if(!ci || typeof ci !== 'string'){
-        return res.json({status: 'error', error: 'Ci invalido o nulo'})
+    if(!nombre || typeof nombre !== 'string'){
+        return res.json({status: 'error', error: 'Ingrese su Nombre'})
     }
 
     if(!apMaterno || typeof apMaterno !== 'string'){
-        return res.json({status: 'error', error: 'Apellido Materno invalido o nulo'})
+        return res.json({status: 'error', error: 'Ingrese su Apellido Materno'})
+    }
+
+    if(!ci || typeof ci !== 'string'){
+        return res.json({status: 'error', error: 'Ingrese su Ci'})
+    }
+
+    if(!oficinaId || typeof oficinaId !== 'string'){
+        return res.json({status: 'error', error: 'Seleccione un Departamento por favor'})
+    }
+
+    if(!cargo || typeof cargo !== 'string'){
+        return res.json({status: 'error', error: 'Seleccione su Cargo por favor'})
+    }
+
+    if(!role || typeof role !== 'string'){
+        return res.json({status: 'error', error: 'Seleccione un rol por favor'})
+    }
+
+    if(!email || typeof email !== 'string'){
+        return res.json({status: 'error', error: 'Ingrese su Email por favor'})
+    }
+
+    if(!celular || typeof celular !== 'string'){
+        return res.json({status: 'error', error: 'Ingrese su nro de Celular por favor'})
+    }
+
+    if(!username || typeof username !== 'string'){
+        return res.json({status: 'error', error: 'Ingrese su Nombre de Usuario por favor'})
+    }
+
+    if(!username.match(/^[a-z][^\W_]{3,14}$/i)){
+        return res.json({status: 'error', error: 'Nombre de Usuario no Valido'})
+    }
+
+    if(!plainTxtPassword || typeof plainTxtPassword !== 'string'){
+        return res.json({status: 'error', error: `Password no valido`})
+    }
+    
+    if(!plainTxtPassword.match(/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/)){
+        return res.json({status: 'error', error: 'Contraseña Invalida, Debe tener al menos 8 caracteres, al menos una letra y al menos un numero'})
+    }
+
+
+    if(!estado || typeof estado !== 'string'){
+        return res.json({status: 'error', error: 'Estado Invalido o Nulo'})
     }
 
     /*if(!apPaterno || typeof apPaterno !== 'string'){
         return res.json({status: 'error', error: 'Apellido Paterno invalido o nulo'})
     }*/
 
-    if(!nombre || typeof nombre !== 'string'){
-        return res.json({status: 'error', error: 'Nombre Invalido o Nulo'})
-    }
+    
 
-    if(!username.match(/^[a-z][^\W_]{3,14}$/i)){
-        return res.json({status: 'error', error: 'Nombre de Usuario no Valido'})
-    }
-    if(!plainTxtPassword.match(/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/)){
-        return res.json({status: 'error', error: 'Contraseña Invalida, Debe tener al menos 8 caracteres, al menos una letra y al menos un numero'})
-    }
-
+    
+    
     const password = await bcrypt.hash(plainTxtPassword, 10)
 
     User.create({username, password, role, nombre, apPaterno, apMaterno, ci, cargo, email, celular, estado, oficinaId})
@@ -173,55 +182,60 @@ router.put('/:id', async(req, res) => {
     // if(!username || typeof username !== 'string'){
     //     return res.json({status: 'error', error: 'Nombre de Usuario No Valido o Nulo'})
     // }
-    if(!plainTxtPassword || typeof plainTxtPassword !== 'string'){
-        return res.json({status: 'error', error: `Contraseña Invalida, Debe tener al menos 5 caracteres, al menos una letra minuscula y al menos un numero ${plainTxtPassword}`})
-    }
-    if(!role || typeof role !== 'string'){
-        return res.json({status: 'error', error: 'Escoja un rol por favor'})
+
+    if(!nombre || typeof nombre !== 'string'){
+        return res.json({status: 'error', error: 'Nombre Invalido o Nulo'})
     }
 
-    if(!oficinaId || typeof oficinaId !== 'string'){
-        return res.json({status: 'error', error: 'Escoga una oficina por favor'})
-    }
+    /*if(!apPaterno || typeof apPaterno !== 'string'){
+        return res.json({status: 'error', error: 'Apellido Paterno invalido o nulo'})
+    }*/
 
-    if(!estado || typeof estado !== 'string'){
-        return res.json({status: 'error', error: 'Estado Invalido o Nulo'})
-    }
-
-    if(!celular || typeof celular !== 'string'){
-        return res.json({status: 'error', error: 'Celular Invalido o Nulo'})
-    }
-
-    if(!email || typeof email !== 'string'){
-        return res.json({status: 'error', error: 'Email Invalido o Nulo'})
-    }
-
-    if(!cargo || typeof cargo !== 'string'){
-        return res.json({status: 'error', error: 'cargo invalido o nulo'})
+    if(!apMaterno || typeof apMaterno !== 'string'){
+        return res.json({status: 'error', error: 'Apellido Materno invalido o nulo'})
     }
 
     if(!ci || typeof ci !== 'string'){
         return res.json({status: 'error', error: 'Ci invalido o nulo'})
     }
 
-    if(!apMaterno || typeof apMaterno !== 'string'){
-        return res.json({status: 'error', error: 'Apellido Materno invalido o nulo'})
+    if(!oficinaId || typeof oficinaId !== 'string'){
+        return res.json({status: 'error', error: 'Escoga una oficina por favor'})
     }
 
-    if(!apPaterno || typeof apPaterno !== 'string'){
-        return res.json({status: 'error', error: 'Apellido Paterno invalido o nulo'})
+    if(!cargo || typeof cargo !== 'string'){
+        return res.json({status: 'error', error: 'cargo invalido o nulo'})
     }
 
-    if(!nombre || typeof nombre !== 'string'){
-        return res.json({status: 'error', error: 'Nombre Invalido o Nulo'})
+    if(!role || typeof role !== 'string'){
+        return res.json({status: 'error', error: 'Escoja un rol por favor'})
+    }
+
+    if(!email || typeof email !== 'string'){
+        return res.json({status: 'error', error: 'Email Invalido o Nulo'})
+    }
+
+    if(!celular || typeof celular !== 'string'){
+        return res.json({status: 'error', error: 'Celular Invalido o Nulo'})
+    }
+
+    if(!plainTxtPassword || typeof plainTxtPassword !== 'string'){
+        return res.json({status: 'error', error: `Contraseña Invalida, Debe tener al menos 8 caracteres, al menos una letra minuscula y al menos un numero ${plainTxtPassword}`})
+    }
+    
+    if(!plainTxtPassword.match(/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/)){
+            return res.json({status: 'error', error: 'Contraseña Invalida, Debe tener al menos 8 caracteres, al menos una letra y al menos un numero'})
+        }
+    
+
+    if(!estado || typeof estado !== 'string'){
+        return res.json({status: 'error', error: 'Estado Invalido o Nulo'})
     }
 
     // if(!username.match(/^[a-z][^\W_]{3,14}$/i)){
     //     return res.json({status: 'error', error: 'Nombre de Usuario no Valido'})
     // }
-    if(!plainTxtPassword.match(/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/)){
-        return res.json({status: 'error', error: 'Contraseña Invalida, Debe tener al menos 8 caracteres, al menos una letra y al menos un numero'})
-    }
+    
 
     const password = await bcrypt.hash(plainTxtPassword, 10)
 
