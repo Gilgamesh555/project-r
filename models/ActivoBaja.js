@@ -21,6 +21,9 @@ const ActivoBajaSchema = new mongoose.Schema({
     imagePath: {
         type: String,
         required: true,
+    },
+    pdfPath: {
+        type: String,
     }
 })
 

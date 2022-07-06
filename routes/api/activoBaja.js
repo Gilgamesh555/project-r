@@ -4,6 +4,7 @@ const router = express.Router()
 
 // Load Activo Model
 const ActivoBaja = require('../../models/ActivoBaja')
+const Log = require('../../models/Log')
 
 const multer = require('multer')
 const path = require('path')
@@ -21,7 +22,7 @@ var storage = multer.diskStorage({
 var upload = multer({
     storage: storage,
     fileFilter(req, file, cb) {
-        if (!file.originalname.match(/\.(png|jpg)$/)) {
+        if (!file.originalname.match(/\.(png|jpg|jpeg|pdf)$/)) {
             return cb(new Error('Please upload a image'))
         }
         cb(undefined, true)
@@ -54,12 +55,13 @@ router.get('/:id', (req, res) => {
 
 // @route POST api/activos
 // @description add/save a activo
-router.post('/', upload.single('imagePath'), async (req, res) => {
+router.post('/', upload.fields([{name: 'imagePath', maxCount: 1}, {name: 'pdfPath', maxCount: 1}]),   async (req, res) => {
     // Hashing the passwords
 
     const { userId, activoId, description, date } = req.body
 
-    const imagePath = req.file.path
+    const imagePath = req.files.imagePath[0].path
+    const pdfPath = req.files.pdfPath[0].path
 
     if (!imagePath) {
         return res.json({ status: 'error', error: 'Imagen no Valida o Nula' })
@@ -81,7 +83,7 @@ router.post('/', upload.single('imagePath'), async (req, res) => {
         return res.json({ status: 'error', error: 'userId no Valido o Nulo' })
     }
 
-    await ActivoBaja.create({ userId, activoId, description, date, imagePath })
+    await ActivoBaja.create({ userId, activoId, description, date, imagePath, pdfPath })
         .then(activo => {
             var today = new Date();
             var dd = String(today.getDate()).padStart(2, '0');
@@ -92,7 +94,7 @@ router.post('/', upload.single('imagePath'), async (req, res) => {
             Log.create({
                 userId: usuarioId,
                 activoId: activo._id,
-                description: `creo el activo con un costo inicial de ${activo.costoInicial}`,
+                description: `Dio de baja el activo`,
                 date: today
             })
 

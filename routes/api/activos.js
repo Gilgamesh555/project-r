@@ -76,6 +76,16 @@ router.get('/userId/:userId', (req, res) => {
         .catch(err => res.status(404).json({ noactivosfound: 'Usuario no encontrado' }))
 })
 
+// @route GET api/activos/:id
+// @description get single activo by id
+router.get('/oficina/:oficinaId', (req, res) => {
+    Activo.find({
+        'oficinaId': req.params.oficinaId
+    })
+        .then(activo => res.json(activo))
+        .catch(err => res.status(404).json({ noactivosfound: 'Usuario no encontrado' }))
+})
+
 // @route POST api/activos
 // @description add/save a activo
 router.post('/', upload.single('imagePath'), async (req, res) => {

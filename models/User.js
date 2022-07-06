@@ -41,7 +41,8 @@ const UserSchema = new mongoose.Schema({
     },
     celular: {
         type: String,
-        required: true
+        required: true,
+        unique: true,
     },
     estado: {
         type: String,

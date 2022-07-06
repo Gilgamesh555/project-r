@@ -47,6 +47,7 @@ app.use('/api/activos', activos)
 app.use('/api/ufv', ufv)
 app.use('/uploadActivos', express.static('uploadActivos'))
 app.use('/uploadActivosBajaReports', express.static('uploadActivosBajaReports'))
+app.use('/pdfBajaReports', express.static('pdfBajaReports'))
 app.use('/api/roles', roles);
 app.use('/api/views', views);
 app.use('/api/roleviews', roleViews);
