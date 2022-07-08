@@ -39,10 +39,36 @@ router.get('/', (req, res) => {
         .catch(err => res.status(404).json({ nousersfound: 'Grupos no encontrados'}))    
 })
 
+// @route GET api/activos/
+// @description get all activos
+router.get('/search', (req, res) => {
+    const { searchInput } = req.query;
+
+    const query = Grupo
+        .aggregate([
+            {$match: {
+                $or: [
+                {'nombre': {$regex: searchInput, $options: 'i'}},
+                {'codigo': {$regex: searchInput, $options: 'i'}},
+                {'vida': {$regex: searchInput, $options: 'i'}},
+            ]}},
+        ])
+
+        Grupo.aggregatePaginate(query, {
+            limit: 5,
+            page: req.query.pageNumber ?? 1
+        })
+        .then(activos => {
+            // activos.docs = activos.docs.map(item => item.document)
+            return res.json(activos)
+        })
+        .catch(err => res.status(404).json({ noactivosfound: 'Usuarios no encontrados' }))
+})
+
 // @route GET api/grupos/
 // @description get all grupos
 router.get('/all', (req, res) => {
-    Grupo.paginate({}, {
+    Grupo.aggregatePaginate({}, {
         limit: 5,
         page: req.query.pageNumber ?? 0
     })

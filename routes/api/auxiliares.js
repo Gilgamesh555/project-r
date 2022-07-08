@@ -29,10 +29,48 @@ router.get('/', (req, res) => {
         .catch(err => res.status(404).json({ nousersfound: 'Auxiliares no encontrados'}))    
 })
 
+// @route GET api/activos/
+// @description get all activos
+router.get('/search', (req, res) => {
+    const { searchInput } = req.query;
+
+    const query = Auxiliar
+        .aggregate([
+            {$project: {
+                'grupoId': {'$toObjectId': '$grupoId'}, 
+                document: "$$ROOT",
+            }},
+            {
+                $lookup: {
+                    from: 'grupos',
+                    localField: 'grupoId',
+                    foreignField: '_id',
+                    as: "grupos"
+                }
+            },
+            {$match: {
+                $or: [
+                {'document.nombre': {$regex: searchInput, $options: 'i'}},
+                {'document.codigo': {$regex: searchInput, $options: 'i'}},
+                {'grupos.nombre': {$regex: searchInput, $options: 'i'}},
+            ]}},
+        ])
+
+        Auxiliar.aggregatePaginate(query, {
+            limit: 5,
+            page: req.query.pageNumber ?? 1
+        })
+        .then(activos => {
+            activos.docs = activos.docs.map(item => item.document)
+            return res.json(activos)
+        })
+        .catch(err => res.status(404).json({ noactivosfound: 'Auxiliares no encontrados' }))
+})
+
 // @route GET api/auxiliares/
 // @description get all auxiliares
 router.get('/all', (req, res) => {
-    Auxiliar.paginate({}, {
+    Auxiliar.aggregatePaginate({}, {
         limit: 5,
         page: req.query.pageNumber ?? 0
     })

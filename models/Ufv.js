@@ -1,5 +1,5 @@
 const mongoose = require('mongoose')
-const mongoosePaginate = require('mongoose-paginate-v2');
+const mongoosePaginate = require('mongoose-aggregate-paginate-v2');
 
 const UfvSchema = new mongoose.Schema({
     fecha: {

@@ -27,10 +27,34 @@ router.get('/', (req, res) => {
         .catch(err => res.status(404).json({ nousersfound: 'Ufvs no encontrados'}))    
 })
 
+// @route GET api/activos/
+// @description get all activos
+router.get('/search', (req, res) => {
+    const { searchInput } = req.query;
+
+    const query = Ufv
+        .aggregate([
+            {$match: {
+                $or: [
+                {'fecha': {$regex: searchInput, $options: 'i'}},
+                {'valor': {$regex: searchInput, $options: 'i'}},
+            ]}},
+        ])
+
+        Ufv.aggregatePaginate(query, {
+            limit: 5,
+            page: req.query.pageNumber ?? 1
+        })
+        .then(ufvs => {
+            return res.json(ufvs)
+        })
+        .catch(err => res.status(404).json({ noactivosfound: 'Usuarios no encontrados' }))
+})
+
 // @route GET api/ufvs/
 // @description get all ufvs
 router.get('/all', (req, res) => {
-    Ufv.paginate({}, {
+    Ufv.aggregatePaginate({}, {
         limit: 5,
         page: req.query.pageNumber ?? 0
     })

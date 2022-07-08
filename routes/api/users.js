@@ -73,10 +73,62 @@ router.get('/', async(req, res) => {
         .catch(err => res.status(404).json({ nousersfound: 'Usuarios no encontrados'}))    
 })
 
+// @route GET api/activos/
+// @description get all activos
+router.get('/search', (req, res) => {
+    const { searchInput } = req.query;
+
+    const query = User
+        .aggregate([
+            {$project: {
+                'oficinaId': {'$toObjectId': '$oficinaId'}, 
+                'cargo': {'$toObjectId': '$cargo'}, 
+                document: "$$ROOT",
+            }},
+            {
+                $lookup: {
+                    from: 'oficinas',
+                    localField: 'oficinaId',
+                    foreignField: '_id',
+                    as: "oficinas"
+                }
+            },
+            {
+                $lookup: {
+                    from: 'stands',
+                    localField: 'cargo',
+                    foreignField: '_id',
+                    as: "cargos"
+                }
+            },
+            {$match: {
+                $or: [
+                {'document.nombre': {$regex: searchInput, $options: 'i'}},
+                {'document.apPaterno': {$regex: searchInput, $options: 'i'}},
+                {'document.apMaterno': {$regex: searchInput, $options: 'i'}},
+                {'document.ci': {$regex: searchInput, $options: 'i'}},
+                {'cargos.name': {$regex: searchInput, $options: 'i'}},
+                {'document.celular': {$regex: searchInput, $options: 'i'}},
+                {'document.estado': {$regex: searchInput, $options: 'i'}},
+                {'oficinas.nombre': {$regex: searchInput, $options: 'i'}},
+            ]}},
+        ])
+
+        User.aggregatePaginate(query, {
+            limit: 5,
+            page: req.query.pageNumber ?? 1
+        })
+        .then(activos => {
+            activos.docs = activos.docs.map(item => item.document)
+            return res.json(activos)
+        })
+        .catch(err => res.status(404).json({ noactivosfound: 'Usuarios no encontrados' }))
+})
+
 // @route GET api/users/
 // @description get all user
 router.get('/all', async(req, res) => {
-    User.paginate({}, {
+    User.aggregatePaginate({}, {
         limit: 5,
         page: req.query.pageNumber ?? 0
     })

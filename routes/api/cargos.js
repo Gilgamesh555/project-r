@@ -13,10 +13,35 @@ router.get('/', (req, res) => {
         .catch(err => res.status(404).json({ noCargosFound: 'Cargos no encontrados' }));
 })
 
+// @route GET api/activos/
+// @description get all activos
+router.get('/search', (req, res) => {
+    const { searchInput } = req.query;
+
+    const query = Cargo
+        .aggregate([
+            {$match: {
+                $or: [
+                {'name': {$regex: searchInput, $options: 'i'}},
+                {'code': {$regex: searchInput, $options: 'i'}},
+            ]}},
+        ])
+
+    Cargo.aggregatePaginate(query, {
+        limit: 5,
+        page: req.query.pageNumber ?? 1
+    })
+    .then(activos => {
+        // activos.docs = activos.docs.map(item => item.document)
+        return res.json(activos)
+    })
+    .catch(err => res.status(404).json({ noactivosfound: 'Usuarios no encontrados' }))
+})
+
 // @route GET api/roles/
 // @description get all user
 router.get('/all', (req, res) => {
-    Cargo.paginate({}, {
+    Cargo.aggregatePaginate({}, {
         limit: 5,
         page: req.query.pageNumber ?? 0
     })

@@ -9,7 +9,7 @@ const { json } = require('body-parser')
 // @route GET api/activos/
 // @description get all activos
 router.get('/', (req, res) => {
-    Log.paginate({}, {})
+    Log.aggregatePaginate({}, {})
         .then(activos => res.json(activos))
         .catch(err => res.status(404).json({ noactivosfound: 'Usuarios no encontrados' }))
 })
@@ -26,7 +26,7 @@ router.get('/getByDate', (req, res) => {
 // @route GET api/activos/
 // @description get all activos
 router.get('/getByActivo/:id', (req, res) => {
-    Log.paginate({
+    Log.aggregatePaginate({
         'activoId': req.params.id
     } ,{
         limit: 5,

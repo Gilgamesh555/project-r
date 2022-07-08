@@ -1,6 +1,7 @@
 // routes/api/activos
 const express = require('express')
 const router = express.Router()
+const mongoose = require('mongoose')
 const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
 
@@ -49,10 +50,81 @@ router.get('/', (req, res) => {
 
 // @route GET api/activos/
 // @description get all activos
+router.get('/search', (req, res) => {
+    const { searchInput } = req.query;
+
+    const query = Activo
+        .aggregate([
+            {$project: {
+                'oficinaId': {'$toObjectId': '$oficinaId'}, 
+                'auxiliarId': {'$toObjectId': '$auxiliarId'},
+                'oficinaId': {'$toObjectId': '$oficinaId'},
+                'usuarioId': {'$toObjectId': '$usuarioId'},
+                document: "$$ROOT",
+            }},
+            {
+                $lookup: {
+                    from: 'users',
+                    localField: 'usuarioId',
+                    foreignField: '_id',
+                    as: "users"
+                }
+            },
+            {
+                $lookup: {
+                    from: 'oficinas',
+                    localField: 'oficinaId',
+                    foreignField: '_id',
+                    as: "oficinas"
+                }
+            },
+            {
+                $lookup: {
+                    from: 'auxiliars',
+                    localField: 'auxiliarId',
+                    foreignField: '_id',
+                    as: "auxiliares"
+                }
+            },
+            {
+                $lookup: {
+                    from: 'oficinas',
+                    localField: 'oficinaId',
+                    foreignField: '_id',
+                    as: "oficinas"
+                }
+            },
+            {$match: {
+                $or: [
+                {'document.codigo': {$regex: searchInput, $options: 'i'}},
+                {'oficinas.nombre': {$regex: searchInput, $options: 'i'}},
+                {'auxiliares.nombre': {$regex: searchInput, $options: 'i'}},
+                {'users.username': {$regex: searchInput, $options: 'i'}},
+                {'users.nombre': {$regex: searchInput, $options: 'i'}},
+                {'users.apPaterno': {$regex: searchInput, $options: 'i'}},
+                {'users.apMaterno': {$regex: searchInput, $options: 'i'}},
+                {'document.costoInicial': {$regex: searchInput, $options: 'i'}},
+                {'document.estado': {$regex: searchInput, $options: 'i'}},
+            ]}},
+        ])
+
+        Activo.aggregatePaginate(query, {
+            limit: 5,
+            page: req.query.pageNumber ?? 1
+        })
+        .then(activos => {
+            activos.docs = activos.docs.map(item => item.document)
+            return res.json(activos)
+        })
+        .catch(err => res.status(404).json({ noactivosfound: 'Usuarios no encontrados' }))
+})
+
+// @route GET api/activos/
+// @description get all activos
 router.get('/all', (req, res) => {
-    Activo.paginate({}, {
+    Activo.aggregatePaginate({}, {
         limit: 5,
-        page: req.query.pageNumber ?? 0
+        page: req.query.pageNumber ?? 1
     })
         .then(activos => res.json(activos))
         .catch(err => res.status(404).json({ noactivosfound: 'Usuarios no encontrados' }))
