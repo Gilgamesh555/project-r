@@ -26,7 +26,7 @@ router.get('/getByDate', (req, res) => {
 // @route GET api/activos/
 // @description get all activos
 router.get('/getByActivo/:id', (req, res) => {
-    Log.aggregatePaginate({
+    Log.paginate({
         'activoId': req.params.id
     } ,{
         limit: 5,

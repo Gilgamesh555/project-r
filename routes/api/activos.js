@@ -255,6 +255,7 @@ router.post('/', upload.single('imagePath'), async (req, res) => {
         costoInicial = 1
     }
 
+    const userX = await User.findById(usuarioId)
 
     await Activo.create({ codigo, fechaIncorporacion, fechaRegistro, ufvId, grupoId, auxiliarId, oficinaId, usuarioId, estadoActivo, costoInicial, observaciones, estado, descripcion, imagePath })
         .then(activo => {
@@ -267,7 +268,7 @@ router.post('/', upload.single('imagePath'), async (req, res) => {
             Log.create({
                 userId: usuarioId,
                 activoId: activo._id,
-                description: `creo el activo con un costo inicial de ${activo.costoInicial}.\n
+                description: `Usuario ${userX.nombre} ${userX.apPaterno} ${userX.apMaterno} creo el activo con un costo inicial de ${activo.costoInicial}.\n
                             Con un estado ${activo.estadoActivo}.\n
                             Observaciones: ${activo.observaciones}.\n
                             Descripcion: ${activo.descripcion}`,
@@ -290,6 +291,7 @@ router.put('/modify', async (req, res) => {
     const { actives } = req.body;
 
     const { usuarioId, firstUserId, secondUserId } = req.body;
+    const userX = await User.findById(usuarioId)
 
     actives.map(active => {
         if (active) {
@@ -310,7 +312,7 @@ router.put('/modify', async (req, res) => {
                     Log.create({
                         userId: usuarioId,
                         activoId: active._id,
-                        description: `cambio al encargado del activo con Nombre: ${oldUserName}.\n
+                        description: `Usuario ${userX.nombre} ${userX.apPaterno} ${userX.apMaterno}. cambio al encargado del activo con Nombre: ${oldUserName}.\n
                                 Por el nuevo encargado con Nombre: ${newUserName}`,
                         date: today
                     })
@@ -425,6 +427,8 @@ router.put('/:id', upload.single('imagePath'), async (req, res) => {
         costoInicial = 1
     }
 
+    const userX = await User.findById(usuarioId)
+
     Activo.findByIdAndUpdate(req.params.id, { codigo, fechaIncorporacion, fechaRegistro, ufvId, grupoId, auxiliarId, oficinaId, usuarioId, estadoActivo, costoInicial, observaciones, estado, descripcion, imagePath })
         .then(user => {
             var today = new Date();
@@ -436,7 +440,7 @@ router.put('/:id', upload.single('imagePath'), async (req, res) => {
             Log.create({
                 userId: usuarioId,
                 activoId: user._id,
-                description: `modifico el activo.\nCosto Inicial: ${costoInicial}.\nEstado Activo: ${estadoActivo}.\nEstado: ${estado}.\nObservaciones: ${observaciones}.\nDescripcion: ${descripcion}.`,
+                description: `Usuario ${userX.nombre} ${userX.apPaterno} ${userX.apMaterno} modifico el activo.\nCosto Inicial: ${costoInicial}.\nEstado Activo: ${estadoActivo}.\nEstado: ${estado}.\nObservaciones: ${observaciones}.\nDescripcion: ${descripcion}.`,
                 date: today
             })
             return res.json({ msg: 'Updated Succesfully' })
@@ -448,6 +452,8 @@ router.put('/:id', upload.single('imagePath'), async (req, res) => {
 // @description update a book by id
 router.put('/:id/estado', async (req, res) => {
     const { usuarioId } = req.body
+
+    const userX = await User.findById(usuarioId)
 
     // Hashing the passwords
     Activo.findByIdAndUpdate(req.params.id, req.body)
@@ -463,7 +469,8 @@ router.put('/:id/estado', async (req, res) => {
             Log.create({
                 userId: usuarioId,
                 activoId: activo._id,
-                description: `modifico el estado del activo a ${estado}`,
+                description: `Usuario ${userX.nombre} ${userX.apPaterno} ${userX.apMaterno} modifico el estado del ${activo.estado} a ${estado}
+                ${estado === 'inactivo' ? 'Tambien se genero un reporte' : ''}`,
                 date: today
             })
 
