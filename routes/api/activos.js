@@ -163,7 +163,8 @@ router.get('/oficina/:oficinaId', (req, res) => {
 router.post('/', upload.single('imagePath'), async (req, res) => {
     // Hashing the passwords
 
-    const { fechaIncorporacion, fechaRegistro, ufvId, grupoId, auxiliarId, oficinaId, usuarioId, estadoActivo, costoInicial, observaciones, estado, descripcion } = req.body
+    const { fechaIncorporacion, fechaRegistro, ufvId, grupoId, auxiliarId, oficinaId, usuarioId, estadoActivo, observaciones, estado, descripcion } = req.body
+    let { costoInicial } = req.body;
 
     const imagePath = req.file.path
 
@@ -250,6 +251,10 @@ router.post('/', upload.single('imagePath'), async (req, res) => {
     //     return res.json({status: 'error', error: 'Codigo No Valido o Nulo'})
     // }
 
+    if (parseFloat(costoInicial) <= 0.0) {
+        costoInicial = 1
+    }
+
 
     await Activo.create({ codigo, fechaIncorporacion, fechaRegistro, ufvId, grupoId, auxiliarId, oficinaId, usuarioId, estadoActivo, costoInicial, observaciones, estado, descripcion, imagePath })
         .then(activo => {
@@ -321,7 +326,8 @@ router.put('/modify', async (req, res) => {
 router.put('/:id', upload.single('imagePath'), async (req, res) => {
     // Hashing the passwords
 
-    const { fechaIncorporacion, fechaRegistro, ufvId, grupoId, auxiliarId, oficinaId, usuarioId, estadoActivo, costoInicial, observaciones, estado, descripcion, _id } = req.body
+    const { fechaIncorporacion, fechaRegistro, ufvId, grupoId, auxiliarId, oficinaId, usuarioId, estadoActivo, observaciones, estado, descripcion, _id } = req.body
+    let { costoInicial } = req.body
 
     var imagePath
 
@@ -413,6 +419,10 @@ router.put('/:id', upload.single('imagePath'), async (req, res) => {
 
     if (!codigo || typeof codigo !== 'string') {
         return res.json({ status: 'error', error: 'Codigo No Valido o Nulo' })
+    }
+
+    if (parseFloat(costoInicial) <= 0.0) {
+        costoInicial = 1
     }
 
     Activo.findByIdAndUpdate(req.params.id, { codigo, fechaIncorporacion, fechaRegistro, ufvId, grupoId, auxiliarId, oficinaId, usuarioId, estadoActivo, costoInicial, observaciones, estado, descripcion, imagePath })
